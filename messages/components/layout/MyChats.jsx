@@ -19,7 +19,7 @@ const MyChats = ({ fetchAgain }) => {
       };
 
       const { data } = await axios.get(`${process.env.NEXT_PUBLIC_CHAT_EXPRESS_SERVER}/api/chat`, config);
-      console.log(data);
+      // console.log(data);
       setChats(data);
     } catch (error) {
       console.log(error);
@@ -35,8 +35,8 @@ const MyChats = ({ fetchAgain }) => {
   return (
     <div className={`${selectedChat ? "hidden" : "flex"} md:flex flex-col items-center p-3 bg-white w-full md:w-[31%] rounded-lg border`}>
       <div className='pb-3 px-3 text-[28px] md:text-3xl flex w-full justify-between items-center'>
-        My Chats
-        <button className='btn btn-sm btn-outline hover:bg-gray-200 text-black'>New Group</button>
+        Chats
+        {/* <button className='btn btn-sm btn-outline hover:bg-gray-200 text-black'>New Group</button> */}
       </div>
       <div className='flex flex-col p-3 bg-[#F8F8F8] w-full h-screen rounded-lg overflow-y-hidden'>
         {

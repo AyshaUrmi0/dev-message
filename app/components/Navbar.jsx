@@ -176,7 +176,7 @@ export default function Navbar() {
                       <a>Settings</a>
                     </li>
                     <li>
-                      <Link href="/messages">Message</Link>
+                      <Link href="/messages/chats">Message</Link>
                     </li>
                     <li>
                       <a>Notification</a>

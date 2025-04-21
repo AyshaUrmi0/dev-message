@@ -7,6 +7,7 @@ import io from "socket.io-client";
 import { FaArrowLeft } from "react-icons/fa";
 import { getSender } from "../config/ChatLogics";
 import ScrollableChat from './ScrollableChat';
+import { CiLocationArrow1 } from "react-icons/ci";
 
 const ENDPOINT = process.env.NEXT_PUBLIC_CHAT_EXPRESS_SERVER;
 var socket, selectedChatCompare;
@@ -64,9 +65,7 @@ const SingleChat = () => {
 
     useEffect(() => {
         fetchMessages();
-
         selectedChatCompare = selectedChat;
-        // eslint-disable-next-line
     }, [selectedChat]);
 
     useEffect(() => {
@@ -110,6 +109,32 @@ const SingleChat = () => {
             }
         }
     };
+
+    const handelSentMessage = async () => {
+        if (newMessage) {
+            socket.emit("stop typing", selectedChat._id);
+            try {
+                const config = {
+                    headers: {
+                        "Content-type": "application/json",
+                        Authorization: `Bearer ${user.token}`,
+                    },
+                };
+                setNewMessage("");
+                const { data } = await axios.post(`${process.env.NEXT_PUBLIC_CHAT_EXPRESS_SERVER}/api/message`,
+                    {
+                        content: newMessage,
+                        chatId: selectedChat,
+                    },
+                    config
+                );
+                socket.emit("new message", data);
+                setMessages([...messages, data]);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
 
     const typingHandler = (e) => {
         setNewMessage(e.target.value);
@@ -160,7 +185,12 @@ const SingleChat = () => {
                             }
                             <div className='mt-4' onKeyDown={sendMessage}>
                                 {isTyping ? <div>Typing...</div> : (<></>)}
-                                <input type="text" onChange={typingHandler} value={newMessage} placeholder='Enter a message...' className='bg-[#E0E0E0] input w-full border' />
+                                <span className='flex items-center justify-center gap-3'>
+                                    <input type="text" onChange={typingHandler} value={newMessage} placeholder='Enter a message...' className='bg-[#E0E0E0] input w-full border' />
+                                    <button className='border-2 border-[#38b2ac] rounded-full p-2' onClick={handelSentMessage}>
+                                        <CiLocationArrow1 />
+                                    </button>
+                                </span>
                             </div>
                         </div>
                     </>
