@@ -15,7 +15,7 @@ const poppins = Poppins({
 });
 
 export const metadata = {
-  title: "DevelopersQuestions",
+  title: "CodeRed",
   description: "This is a Forum for devlopers",
 };
 

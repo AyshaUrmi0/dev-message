@@ -2,6 +2,7 @@ import React from 'react'
 import PostInput from './components/PostInput'
 import BlogBoxTable from '@/app/components/HomeCenter/components/BlogBox/BlogBoxTable/BlogBoxTable'
 import axios from 'axios';
+import ModalClient from '../ModalClient/ModalClient';
 
 const fetchPostedData = async () => {
     try {
@@ -21,6 +22,11 @@ export default async function HomeCenter() {
             <div className="flex flex-col items-center  min-h-screen">
                 {/* Post Input Box */}
                 <PostInput />
+
+                {/* Modal */}
+                <ModalClient />
+
+
                 {/* Post Card */}
                 <BlogBoxTable cardData={cardData} />
             </div>

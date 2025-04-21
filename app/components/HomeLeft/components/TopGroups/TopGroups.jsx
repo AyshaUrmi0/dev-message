@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
+
 import Image from "next/image";
-// import Link from 'next/link'
+import profileImage from '@/public/assets/profile-pic.png';
 
 export default function TopGroups({ communityData }) {
   return (
@@ -12,11 +12,7 @@ export default function TopGroups({ communityData }) {
               <div className="flex items-center space-x-3">
                 <div className="relative rounded-full overflow-hidden">
                   <Image
-                    src={
-                      user?.group_picture
-                        ? user?.group_picture
-                        : "https://placehold.co/10x10"
-                    }
+                    src={user?.group_picture || profileImage}
                     alt={user?.group_name || "Group"}
                     width={38}
                     height={38}
@@ -30,14 +26,17 @@ export default function TopGroups({ communityData }) {
                   <p className="text-xs text-gray-500">web developer</p>
                 </div>
               </div>
+              {/* <button
+                className={`flex items-center justify-center w-8 h-8 rounded-full ${user.isFollowing
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-100 text-gray-700"
+                  } hover:bg-blue-700 group transition`}
+              > */}
               <button
-                className={`flex items-center justify-center w-8 h-8 rounded-full ${
-                  user.isFollowing
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-100 text-gray-700"
-                } hover:bg-blue-700 group transition`}
+              className="cursor-pointer hover:text-blue-700 hover:font-semibold hover:underline hover:underline-offset-4"
               >
-                <svg
+                Join
+                {/* <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-4 group-hover:text-white w-4"
                   fill="none"
@@ -50,7 +49,7 @@ export default function TopGroups({ communityData }) {
                     strokeLinejoin="round"
                     d="M5 13l4 4L19 7"
                   />
-                </svg>
+                </svg> */}
               </button>
             </li>
           ))}

@@ -10,6 +10,25 @@ import profilePic from "@/public/assets/profile-pic.png";
 import DrawerContentPage from "@/app/components/HomeCenter/components/DrawerContentPage";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import Notification from "./Notifications/Notifications";
+
+
+// Delete this part when notification will dynamically work
+// const notifications = [
+//   {
+//     title: "Your call has been confirmed.",
+//     description: "1 hour ago",
+//   },
+//   {
+//     title: "You have a new message!",
+//     description: "1 hour ago",
+//   },
+//   {
+//     title: "Your subscription is expiring soon!",
+//     description: "2 hours ago",
+//   },
+// ];
+
 
 export default function Navbar() {
   const { data: session, status } = useSession();
@@ -43,12 +62,15 @@ export default function Navbar() {
         <Link href={"/"}>Home</Link>
       </li>
       <li>
-        <Link href={"/qus-ans"}>Questions</Link>
+        <Link href={"/qus-ans"}>Questions <span className="hidden lg:flex">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-message-circle-question-icon lucide-message-circle-question"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><path d="M12 17h.01" /></svg>
+        </span> </Link>
       </li>
       <li>
-      <Link href={"/community"}>
-      Community
-      </Link>
+        <Link href={"/community"}>
+          Community
+          <span className="hidden lg:flex"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-users-round-icon lucide-users-round"><path d="M18 21a8 8 0 0 0-16 0" /><circle cx="10" cy="8" r="5" /><path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3" /></svg></span>
+        </Link>
       </li>
     </>
   );
@@ -87,7 +109,7 @@ export default function Navbar() {
         </div>
         <Link href={"/"} className=" hidden lg:flex">
           {/* <SparklesText text="DevQuestions" className="text-2xl" /> */}
-          <h1 className="text-2xl"> CodeRed</h1>
+          <h1 className="text-2xl"> <span className="text-red-700 hover:text-white">Code</span><span className="hover:text-red-700">Red</span> </h1>
         </Link>
         <ul className="menu menu-horizontal px-1 hidden lg:flex">{navLinks}</ul>
       </div>
@@ -104,13 +126,28 @@ export default function Navbar() {
             <Drawer>
               <div className="flex justify-center items-center gap-1.5">
                 <div
-                  className="message btn btn-sm rounded-full bg-black border-none text-white hidden md:flex"
+                  className="message btn btn-sm rounded-full bg-black border border-gray-600 text-white hidden md:flex"
                   onClick={handelMassageRoute}
                 >
                   <MessagesSquare />
                 </div>
-                <div className="notification btn btn-sm rounded-full bg-black border-none text-white hidden lg:flex">
+                {/* <div className="notification btn btn-sm rounded-full bg-black border-none text-white hidden lg:flex">
                   <Bell />
+                </div> */}
+                <div className="dropdown dropdown-end">
+                  <div
+                    tabIndex={0}
+                    role="button"
+                    className="notification btn btn-sm rounded-full bg-black border border-gray-600 text-white hidden lg:flex"
+                  >
+                    <Bell />
+                  </div>
+                  <div
+                    tabIndex={0}
+                    className="dropdown-content bg-white rounded-box z-1 mt-3 shadow"
+                  >
+                    <Notification />
+                  </div>
                 </div>
 
                 <div className="dropdown dropdown-end">

@@ -21,7 +21,7 @@ export default function BlogBoxFooter({ card }) {
         try {
           const response = await fetch('/api/bookmarks');
           const bookmarks = await response.json();
-          const isBookmarked = bookmarks.some(
+          const isBookmarked = bookmarks?.some(
             (bookmark) => bookmark.blogId === card._id && bookmark.type === 'blog'
           );
           setIsBookmarked(isBookmarked);
@@ -85,11 +85,10 @@ export default function BlogBoxFooter({ card }) {
             <EditSection id={card._id} card={card} />
             {/* Delete button */}
             <DeleteSection id={card._id} />
-            <DropdownMenuItem 
+            <DropdownMenuItem
               onClick={handleBookmark}
-              className={`flex items-center space-x-2 hover:bg-gray-100 p-2 cursor-pointer ${
-                isBookmarked ? 'text-blue-600' : ''
-              }`}
+              className={`flex items-center space-x-2 hover:bg-gray-100 p-2 cursor-pointer ${isBookmarked ? 'text-blue-600' : ''
+                }`}
             >
               <Bookmark className="w-4 h-4" />
               <span>{isBookmarked ? 'Unbookmark' : 'Bookmark'}</span>
