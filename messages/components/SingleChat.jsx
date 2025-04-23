@@ -8,6 +8,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import { getSender } from "../config/ChatLogics";
 import ScrollableChat from './ScrollableChat';
 import { CiLocationArrow1 } from "react-icons/ci";
+import { IoMdMore } from "react-icons/io";
 
 const ENDPOINT = process.env.NEXT_PUBLIC_CHAT_EXPRESS_SERVER;
 var socket, selectedChatCompare;
@@ -168,8 +169,11 @@ const SingleChat = () => {
                             </button>
                             {messages && (
                                 !selectedChat.isGroupChat ? (
-                                    <div>
-                                        {getSender(user, selectedChat.users)}
+                                    <div className='flex justify-between items-center w-full'>
+                                        <p>{getSender(user, selectedChat.users)}</p>
+                                        <button className='bg-gray-200 p-1 hover:bg-accent tooltip cursor-pointer rounded-full' onClick={0} data-tip="More Options">
+                                            <IoMdMore />
+                                        </button>
                                     </div>
                                 ) : (
                                     <div>
