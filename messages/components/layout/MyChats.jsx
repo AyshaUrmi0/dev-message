@@ -5,6 +5,7 @@ import { ChatState } from "../../Context/ChatProvider";
 import axios from 'axios';
 import { getSender, getSenderImage } from '../../config/ChatLogics';
 import Skeleton from '../ui/Skeleton';
+import SideDrawer from './SideDrawer';
 
 const MyChats = ({ fetchAgain }) => {
 
@@ -36,8 +37,8 @@ const MyChats = ({ fetchAgain }) => {
   return (
     <div className={`${selectedChat ? "hidden" : "flex"} md:flex flex-col items-center p-3 bg-black w-full md:w-[31%] rounded-lg border`}>
       <div className='pb-3 px-3 text-[28px] md:text-3xl flex w-full justify-between items-center text-white'>
-        Chats
-        {/* <button className='btn btn-sm btn-outline hover:bg-gray-200 text-black'>New Group</button> */}
+        <span>Chats</span>
+        <SideDrawer />
       </div>
       <div className='flex flex-col p-3 bg-black w-full h-screen rounded-lg overflow-y-hidden'>
         {

@@ -4,14 +4,13 @@ import { ChatState } from "../../Context/ChatProvider";
 import axios from "axios";
 import Skeleton from "../ui/Skeleton";
 import UserListItem from "../ui/UserListItem";
-import { FaBell, FaSearch } from "react-icons/fa";
-import Image from "next/image";
+import { FaSearch } from "react-icons/fa";
 
 const SideDrawer = () => {
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [loadingChat, setLoadingChat] = useState(false);
+  // const [loadingChat, setLoadingChat] = useState(false);
   const {
     setSelectedChat,
     user,
@@ -46,7 +45,7 @@ const SideDrawer = () => {
     console.log(userId);
 
     try {
-      setLoadingChat(true);
+      // setLoadingChat(true);
       const config = {
         headers: {
           "Content-type": "application/json",
@@ -57,7 +56,7 @@ const SideDrawer = () => {
 
       if (!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);
       setSelectedChat(data);
-      setLoadingChat(false);
+      // setLoadingChat(false);
       // onClose();
     } catch (error) {
       console.log(error);
@@ -66,16 +65,17 @@ const SideDrawer = () => {
 
   return (
     <div>
-      <div className="flex justify-between items-center bg-black w-full py-2 px-3 border-2">
+      <div className="flex justify-between items-center bg-black w-full py-2 px-3">
         <div>
           <div className="drawer" data-theme="dark">
             <input id="my-drawer" type="checkbox" className="drawer-toggle" />
             <div className="drawer-content">
               <label
                 htmlFor="my-drawer"
-                className="btn btn-ghost text-white hover:bg-gray-600">
+                className="btn btn-ghost text-white hover:bg-gray-600"
+              >
                 <FaSearch />
-                <span className="hidden md:flex">Search User</span>
+                <span className="hidden lg:flex">Search User</span>
               </label>
             </div>
             <div className="drawer-side z-50">
@@ -96,17 +96,6 @@ const SideDrawer = () => {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-        <h2 className="text-2xl text-white">Messages</h2>
-        <div className="flex items-center gap-2 justify-center">
-          <div className="p-1 cursor-pointer text-white">
-            <FaBell />
-          </div>
-          <div>
-            <button className="btn btn-ghost text-black hover:bg-gray-200">
-              <img height={32} width={32} src={`${user?.image || user?.pic}`} alt="User" className="rounded-full outline-2 outline-blue-500" />
-            </button>
           </div>
         </div>
       </div>
