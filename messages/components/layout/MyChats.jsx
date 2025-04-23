@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { ChatState } from "../../Context/ChatProvider";
 import axios from 'axios';
 import { getSender, getSenderImage } from '../../config/ChatLogics';
+import Skeleton from '../ui/Skeleton';
 
 const MyChats = ({ fetchAgain }) => {
 
@@ -53,7 +54,7 @@ const MyChats = ({ fetchAgain }) => {
                 ))
               }
             </div>
-          ) : "Loading..."}
+          ) : <div>Loading...</div>}
       </div>
     </div>
   )

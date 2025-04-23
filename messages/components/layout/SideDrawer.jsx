@@ -5,6 +5,7 @@ import axios from "axios";
 import Skeleton from "../ui/Skeleton";
 import UserListItem from "../ui/UserListItem";
 import { FaBell, FaSearch } from "react-icons/fa";
+import Image from "next/image";
 
 const SideDrawer = () => {
   const [search, setSearch] = useState("");
@@ -104,7 +105,7 @@ const SideDrawer = () => {
           </div>
           <div>
             <button className="btn btn-ghost text-black hover:bg-gray-200">
-              <img src="#" alt="User" className="rounded-full w-8 h-8 outline-2 outline-blue-500" />
+              <img height={32} width={32} src={`${user?.image || user?.pic}`} alt="User" className="rounded-full outline-2 outline-blue-500" />
             </button>
           </div>
         </div>
