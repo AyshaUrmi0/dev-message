@@ -5,6 +5,7 @@ import axios from "axios";
 import Skeleton from "../ui/Skeleton";
 import UserListItem from "../ui/UserListItem";
 import { FaBell, FaSearch } from "react-icons/fa";
+import Image from "next/image";
 
 const SideDrawer = () => {
   const [search, setSearch] = useState("");
@@ -65,21 +66,21 @@ const SideDrawer = () => {
 
   return (
     <div>
-      <div className="flex justify-between items-center bg-white w-full py-2 px-3 border-2">
+      <div className="flex justify-between items-center bg-black w-full py-2 px-3 border-2">
         <div>
-          <div className="drawer">
+          <div className="drawer" data-theme="dark">
             <input id="my-drawer" type="checkbox" className="drawer-toggle" />
             <div className="drawer-content">
               <label
                 htmlFor="my-drawer"
-                className="btn btn-ghost text-black hover:bg-gray-200">
+                className="btn btn-ghost text-white hover:bg-gray-600">
                 <FaSearch />
                 <span className="hidden md:flex">Search User</span>
               </label>
             </div>
             <div className="drawer-side z-50">
               <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
-              <div className="menu bg-base-200 text-base-content min-h-full w-80 p-4">
+              <div className="menu bg-base-200 text-white min-h-full w-80 p-4">
                 <div className="flex items-center gap-2 justify-center">
                   <input type="text" placeholder="Search by name or email" value={search} onChange={(e) => setSearch(e.target.value)} className="input input-bordered w-full max-w-xs" />
                   <button onClick={handelSearch} className="btn outline btn-sm">GO</button>
@@ -97,15 +98,14 @@ const SideDrawer = () => {
             </div>
           </div>
         </div>
-        <h2 className="text-2xl">Messages</h2>
+        <h2 className="text-2xl text-white">Messages</h2>
         <div className="flex items-center gap-2 justify-center">
-          <div className="p-1 cursor-pointer">
+          <div className="p-1 cursor-pointer text-white">
             <FaBell />
-            {/* <MenuList></MenuList> */}
           </div>
           <div>
             <button className="btn btn-ghost text-black hover:bg-gray-200">
-              <img src="#" alt="User" className="rounded-full w-8 h-8 outline-2 outline-blue-500" />
+              <img height={32} width={32} src={`${user?.image || user?.pic}`} alt="User" className="rounded-full outline-2 outline-blue-500" />
             </button>
           </div>
         </div>

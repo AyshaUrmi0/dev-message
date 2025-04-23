@@ -16,8 +16,8 @@ const nextConfig = {
         hostname: 'i.ibb.co',
       },
       {
-        protocol: "https",
-        hostname: "*",
+        protocol: 'https',
+        hostname: 'https://icon-library.com',
       },
     ],
   },

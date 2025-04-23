@@ -8,6 +8,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import { getSender } from "../config/ChatLogics";
 import ScrollableChat from './ScrollableChat';
 import { CiLocationArrow1 } from "react-icons/ci";
+import { IoMdMore } from "react-icons/io";
 
 const ENDPOINT = process.env.NEXT_PUBLIC_CHAT_EXPRESS_SERVER;
 var socket, selectedChatCompare;
@@ -56,10 +57,10 @@ const SingleChat = () => {
 
     useEffect(() => {
         socket = io(ENDPOINT);
-        socket.emit("setup", user);
-        socket.on("connected", () => setSocketConnected(true));
-        socket.on("typing", () => setIsTyping(true));
-        socket.on("stop typing", () => setIsTyping(false));
+        socket?.emit("setup", user);
+        socket?.on("connected", () => setSocketConnected(true));
+        socket?.on("typing", () => setIsTyping(true));
+        socket?.on("stop typing", () => setIsTyping(false));
         // eslint-disable-next-line
     }, []);
 
@@ -69,7 +70,7 @@ const SingleChat = () => {
     }, [selectedChat]);
 
     useEffect(() => {
-        socket.on("message recieved", (newMessageRecieved) => {
+        socket?.on("message recieved", (newMessageRecieved) => {
             if (
                 !selectedChatCompare || // if chat is not selected or doesn't match current chat
                 selectedChatCompare._id !== newMessageRecieved.chat._id
@@ -157,19 +158,28 @@ const SingleChat = () => {
         }, timerLength);
     };
 
+    const handelMoreOptions = (chat) => {
+        // if (!chat.isGroupChat) return;
+        // setSelectedChat(chat);
+        console.log("More Options clicked", chat);
+    }
+
     return (
-        <div className='w-full relative h-[75vh]'>
+        <div className='w-full relative h-[75vh] rounded-lg' data-theme="dark">
             {
                 selectedChat ? (
                     <>
-                        <div className='text-[28px] md:text-3xl pb-3 px-2 w-full flex justify-between items-center'>
-                            <button className='btn btn-outline btn-sm text-black hover:bg-gray-200 flex md:hidden' onClick={() => setSelectedChat("")}>
+                        <div className='text-[28px] md:text-3xl pb-3 px-2 w-full flex justify-between items-center gap-2 rounded-lg bg-slate-700 text-white'>
+                            <button className='bg-gray-600 p-1 rounded-full flex md:hidden cursor-pointer hover:bg-gray-500' onClick={() => setSelectedChat("")}>
                                 <FaArrowLeft />
                             </button>
                             {messages && (
                                 !selectedChat.isGroupChat ? (
-                                    <div>
-                                        {getSender(user, selectedChat.users)}
+                                    <div className='flex justify-between items-center w-full'>
+                                        <p>{getSender(user, selectedChat.users)}</p>
+                                        <button onClick={() => handelMoreOptions(selectedChat)} className='bg-gray-500 p-1 hover:bg-gray-600 tooltip cursor-pointer rounded-full' data-tip="More Options">
+                                            <IoMdMore />
+                                        </button>
                                     </div>
                                 ) : (
                                     <div>
@@ -177,16 +187,22 @@ const SingleChat = () => {
                                     </div>
                                 ))}
                         </div>
-                        <div id='chat-container' className='p-3 bg-[#E8E8E8] w-full rounded-lg max-h-full overflow-y-auto'>
+                        <div id='chat-container' className='p-3 bg-slate-800 w-full rounded-lg max-h-full overflow-y-auto' data-theme="dark">
                             {
-                                loading ? ("Loading...") : (<>
+                                loading ? (
+                                    <div className='flex justify-center items-center h-full'>
+                                        <svg className="animate-spin h-8 w-8 text-green-500" viewBox="3 3 18 18" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill="currentColor" d="M12 3v2a7 7 0 1 0 7 7h2a9 9 0 1 1-9-9z" />
+                                        </svg>
+                                    </div>
+                                ) : (<>
                                     <ScrollableChat messages={messages} />
                                 </>)
                             }
-                            <div className='mt-4' onKeyDown={sendMessage}>
+                            <div className='mt-4' onKeyDown={sendMessage} data-theme="dark">
                                 {isTyping ? <div>Typing...</div> : (<></>)}
                                 <span className='flex items-center justify-center gap-3'>
-                                    <input type="text" onChange={typingHandler} value={newMessage} placeholder='Enter a message...' className='bg-[#E0E0E0] input w-full border' />
+                                    <input type="text" onChange={typingHandler} value={newMessage} placeholder='Enter a message...' className='bg-gray-600 input w-full border' />
                                     <button className='border-2 border-[#38b2ac] rounded-full p-2' onClick={handelSentMessage}>
                                         <CiLocationArrow1 />
                                     </button>

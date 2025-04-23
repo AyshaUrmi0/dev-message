@@ -3,7 +3,8 @@
 import React, { useEffect, useState } from 'react'
 import { ChatState } from "../../Context/ChatProvider";
 import axios from 'axios';
-import { getSender } from '../../config/ChatLogics';
+import { getSender, getSenderImage } from '../../config/ChatLogics';
+import Skeleton from '../ui/Skeleton';
 
 const MyChats = ({ fetchAgain }) => {
 
@@ -33,24 +34,27 @@ const MyChats = ({ fetchAgain }) => {
   }, [fetchAgain]);
 
   return (
-    <div className={`${selectedChat ? "hidden" : "flex"} md:flex flex-col items-center p-3 bg-white w-full md:w-[31%] rounded-lg border`}>
-      <div className='pb-3 px-3 text-[28px] md:text-3xl flex w-full justify-between items-center'>
+    <div className={`${selectedChat ? "hidden" : "flex"} md:flex flex-col items-center p-3 bg-black w-full md:w-[31%] rounded-lg border`}>
+      <div className='pb-3 px-3 text-[28px] md:text-3xl flex w-full justify-between items-center text-white'>
         Chats
         {/* <button className='btn btn-sm btn-outline hover:bg-gray-200 text-black'>New Group</button> */}
       </div>
-      <div className='flex flex-col p-3 bg-[#F8F8F8] w-full h-screen rounded-lg overflow-y-hidden'>
+      <div className='flex flex-col p-3 bg-black w-full h-screen rounded-lg overflow-y-hidden'>
         {
           chats ? (
             <div className='overflow-y-hidden space-y-1'>
               {
                 chats.map((chat) => (
-                  <div key={chat._id} onClick={() => setSelectedChat(chat)} className={`${selectedChat === chat ? "bg-[#38B2AC] text-white" : "bg-[#E8E8E8] text-black"} cursor-pointer px-3 py-2 rounded-lg`}>
-                    <p>{!chat.isGroupChat ? getSender(loggedUser, chat.users) : chat.chatName}</p>
+                  <div key={chat._id} onClick={() => setSelectedChat(chat)} className={`${selectedChat === chat ? "bg-slate-500 text-white" : "bg-slate-700 text-white"} cursor-pointer px-3 py-2 rounded-lg`}>
+                    <div className='flex items-center justify-start gap-3'>
+                      <img src={!chat.isGroupChat ? getSenderImage(loggedUser, chat.users) : chat?.image} alt="" className='rounded-full w-8 h-8 outline-2 outline-blue-500' />
+                      <p>{!chat.isGroupChat ? getSender(loggedUser, chat.users) : chat.chatName}</p>
+                    </div>
                   </div>
                 ))
               }
             </div>
-          ) : "Loading..."}
+          ) : <div><Skeleton /> <Skeleton /></div>}
       </div>
     </div>
   )

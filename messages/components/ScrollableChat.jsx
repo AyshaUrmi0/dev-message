@@ -1,6 +1,5 @@
 "use client";
 
-// import ScrollableFeed from "react-scrollable-feed";
 import {
     isLastMessage,
     isSameSender,
@@ -16,23 +15,20 @@ const ScrollableChat = ({ messages }) => {
         <>
             {messages &&
                 messages.map((m, i) => (
-                    <div style={{ display: "flex" }} key={m._id}>
+                    <div className="flex items-center" key={m._id}>
                         {(isSameSender(messages, m, i, user?._id) ||
                             isLastMessage(messages, i, user?._id)) && (
                                 <div>
-                                    <img src={m.sender.pic} alt="Sender image" className="rounded-full w-8 h-8 outline-2 outline-blue-500 mr-1 mt-2 cursor-pointer" />
+                                    <img src={m.sender?.image || m.sender?.pic} alt="Sender image" className="rounded-full w-8 h-8 outline-2 outline-blue-500 mr-1 mt-2 cursor-pointer" />
                                 </div>
                             )}
                         <span
                             style={{
-                                backgroundColor: `${m.sender._id === user?._id ? "#BEE3F8" : "#B9F5D0"
-                                    }`,
+                                backgroundColor: `${m.sender._id === user?._id ? "#1ABC9C" : "#3498DB"}`,
                                 marginLeft: isSameSenderMargin(messages, m, i, user?._id),
                                 marginTop: isSameUser(messages, m, i, user?._id) ? 3 : 10,
-                                borderRadius: "20px",
-                                padding: "5px 15px",
-                                maxWidth: "75%",
                             }}
+                            className="py-1.5 px-3.5 rounded-3xl max-w-[75%]"
                         >
                             {m.content}
                         </span>
