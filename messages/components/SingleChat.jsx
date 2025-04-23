@@ -5,7 +5,7 @@ import { ChatState } from "../Context/ChatProvider";
 import axios from "axios";
 import io from "socket.io-client";
 import { FaArrowLeft } from "react-icons/fa";
-import { getSender } from "../config/ChatLogics";
+import { getSender, getSenderImage } from "../config/ChatLogics";
 import ScrollableChat from './ScrollableChat';
 import { CiLocationArrow1 } from "react-icons/ci";
 import { IoMdMore } from "react-icons/io";
@@ -169,14 +169,19 @@ const SingleChat = () => {
             {
                 selectedChat ? (
                     <>
-                        <div className='text-[28px] md:text-3xl pb-3 px-2 w-full flex justify-between items-center gap-2 rounded-lg bg-slate-700 text-white'>
+                        <div className='text-[28px] md:text-3xl py-2 px-2 w-full flex justify-between items-center gap-2 rounded-lg bg-slate-700 text-white'>
                             <button className='bg-gray-600 p-1 rounded-full flex md:hidden cursor-pointer hover:bg-gray-500' onClick={() => setSelectedChat("")}>
                                 <FaArrowLeft />
                             </button>
                             {messages && (
                                 !selectedChat.isGroupChat ? (
                                     <div className='flex justify-between items-center w-full'>
-                                        <p>{getSender(user, selectedChat.users)}</p>
+                                        <p className='flex items-center gap-2'>
+                                            <button className="btn btn-ghost text-black hover:bg-gray-200 px-2">
+                                                <img height={32} width={32} src={`${getSenderImage(user, selectedChat.users)}`} alt="User" className="rounded-full outline-2 outline-blue-500" />
+                                            </button>
+                                            <span>{getSender(user, selectedChat.users)}</span>
+                                        </p>
                                         <button onClick={() => handelMoreOptions(selectedChat)} className='bg-gray-500 p-1 hover:bg-gray-600 tooltip cursor-pointer rounded-full' data-tip="More Options">
                                             <IoMdMore />
                                         </button>
@@ -187,7 +192,7 @@ const SingleChat = () => {
                                     </div>
                                 ))}
                         </div>
-                        <div id='chat-container' className='p-3 bg-slate-800 w-full rounded-lg max-h-full overflow-y-auto' data-theme="dark">
+                        <div id='chat-container' className='p-3 bg-slate-800 w-full rounded-lg min-h-full max-h-full overflow-y-auto flex flex-col justify-between' data-theme="dark">
                             {
                                 loading ? (
                                     <div className='flex justify-center items-center h-full'>
@@ -195,9 +200,9 @@ const SingleChat = () => {
                                             <path fill="currentColor" d="M12 3v2a7 7 0 1 0 7 7h2a9 9 0 1 1-9-9z" />
                                         </svg>
                                     </div>
-                                ) : (<>
+                                ) : (<div>
                                     <ScrollableChat messages={messages} />
-                                </>)
+                                </div>)
                             }
                             <div className='mt-4' onKeyDown={sendMessage} data-theme="dark">
                                 {isTyping ? <div>Typing...</div> : (<></>)}

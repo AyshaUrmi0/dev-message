@@ -1,8 +1,14 @@
 import React from "react";
-import "./app.css";
 
 const App = ({ children }) => {
-  return <section className="app" data-theme="dark">{children}</section>;
+  return (
+    <section
+      className="min-h-[92vh] flex bg-black bg-cover bg-center font-sans text-black"
+      data-theme="dark"
+    >
+      {children}
+    </section>
+  );
 };
 
 export default App;

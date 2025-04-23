@@ -25,7 +25,7 @@ const ChatPage = () => {
   return (
     <App>
       <div className="w-full" data-theme="dark">
-        {user && <SideDrawer />}
+        {/* {user && <SideDrawer />} */}
         <div className="flex justify-between h-[87vh] p-3 w-full" data-theme="dark">
           {user && <MyChats fetchAgain={fetchAgain} />}
           {user && (
