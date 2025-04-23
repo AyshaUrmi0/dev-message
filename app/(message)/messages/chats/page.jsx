@@ -20,7 +20,7 @@ const ChatPage = () => {
     // console.log("userInfo>>>", userInfo);
   }, []);
 
-  if (!user) return <div>Loading...</div>;
+  if (!user) return <div><Skeleton /><Skeleton /></div>;
 
   return (
     <App>

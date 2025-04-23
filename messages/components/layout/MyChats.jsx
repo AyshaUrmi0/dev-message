@@ -54,7 +54,7 @@ const MyChats = ({ fetchAgain }) => {
                 ))
               }
             </div>
-          ) : <div>Loading...</div>}
+          ) : <div><Skeleton /> <Skeleton /></div>}
       </div>
     </div>
   )

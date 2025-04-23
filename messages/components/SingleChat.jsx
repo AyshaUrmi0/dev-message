@@ -157,7 +157,7 @@ const SingleChat = () => {
             }
         }, timerLength);
     };
-    
+
     const handelMoreOptions = (chat) => {
         // if (!chat.isGroupChat) return;
         // setSelectedChat(chat);
@@ -189,7 +189,13 @@ const SingleChat = () => {
                         </div>
                         <div id='chat-container' className='p-3 bg-slate-800 w-full rounded-lg max-h-full overflow-y-auto' data-theme="dark">
                             {
-                                loading ? ("Loading...") : (<>
+                                loading ? (
+                                    <div className='flex justify-center items-center h-full'>
+                                        <svg className="animate-spin h-8 w-8 text-green-500" viewBox="3 3 18 18" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill="currentColor" d="M12 3v2a7 7 0 1 0 7 7h2a9 9 0 1 1-9-9z" />
+                                        </svg>
+                                    </div>
+                                ) : (<>
                                     <ScrollableChat messages={messages} />
                                 </>)
                             }
