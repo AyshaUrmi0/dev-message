@@ -28,8 +28,8 @@ export async function POST(req) {
     }
 
     const body = await req.json();
-    console.log("Received profile data:", body);
-    console.log("User Email:", session.user.email);
+    // console.log("Received profile data:", body);
+    // console.log("User Email:", session.user.email);
 
     const collection = await dbConnect(collectionNameObj.profileCollection);
     
@@ -48,10 +48,48 @@ export async function POST(req) {
       { upsert: true }
     );
 
-    console.log("MongoDB update result:", result);
+    // console.log("MongoDB update result:", result);
     return new Response(JSON.stringify({ success: true }), { status: 200 });
   } catch (error) {
     console.error("Error saving profile:", error);
+    return new Response(JSON.stringify({ error: "Internal Server Error" }), { status: 500 });
+  }
+}
+
+export async function PUT(req) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+    }
+
+    const formData = await req.formData();
+    const file = formData.get('file');
+    
+    if (!file) {
+      return new Response(JSON.stringify({ error: "No file provided" }), { status: 400 });
+    }
+
+    // Convert file to base64
+    const buffer = await file.arrayBuffer();
+    const base64 = Buffer.from(buffer).toString('base64');
+    
+    const collection = await dbConnect(collectionNameObj.profileCollection);
+    
+    // Update profile picture
+    const result = await collection.updateOne(
+      { email: session.user.email },
+      {
+        $set: {
+          profilePicture: `data:${file.type};base64,${base64}`,
+          updatedAt: new Date(),
+        },
+      }
+    );
+
+    return new Response(JSON.stringify({ success: true }), { status: 200 });
+  } catch (error) {
+    console.error("Error updating profile picture:", error);
     return new Response(JSON.stringify({ error: "Internal Server Error" }), { status: 500 });
   }
 } 

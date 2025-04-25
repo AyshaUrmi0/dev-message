@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useState, useEffect, useRef } from "react";
-import { Bookmark, MessageSquare, Settings, Home, Bell, Edit2, MapPin, Camera } from "lucide-react";
+import { Bookmark, MessageSquare, Settings, Home, Bell, Edit2, MapPin, Camera, UserPlus } from "lucide-react";
 import Image from "next/image";
 
 export default function ProfilePage() {
@@ -10,6 +10,7 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("posts");
   const [profile, setProfile] = useState({
     coverPicture: "",
+    profilePicture: "",
     bio: "",
     about: "",
     location: "",
@@ -19,7 +20,10 @@ export default function ProfilePage() {
   const [bookmarkedQuestions, setBookmarkedQuestions] = useState([]);
   const [bookmarkedBlogs, setBookmarkedBlogs] = useState([]);
   const [totalBookmarks, setTotalBookmarks] = useState(0);
+  const [userPosts, setUserPosts] = useState([]);
+  const [userQuestions, setUserQuestions] = useState([]);
   const fileInputRef = useRef(null);
+  const profilePicInputRef = useRef(null);
 
   useEffect(() => {
     // Fetch profile data when component mounts
@@ -30,6 +34,7 @@ export default function ProfilePage() {
         if (data && Object.keys(data).length > 0) {
           setProfile({
             coverPicture: data.coverPicture || "",
+            profilePicture: data.profilePicture || "",
             bio: data.bio || "",
             about: data.about || "",
             location: data.location || "",
@@ -42,79 +47,110 @@ export default function ProfilePage() {
     fetchProfile();
   }, []);
 
+  // Fetch user's posts (blogs)
+  const fetchUserPosts = async () => {
+    if (!session?.user?.email) return;
+    try {
+      const response = await fetch(`/api/blog?email=${encodeURIComponent(session.user.email)}`);
+      if (response.ok) {
+        const blogs = await response.json();
+        setUserPosts(Array.isArray(blogs) ? blogs : []);
+      }
+    } catch (error) {
+      console.error('Error fetching user posts:', error);
+      setUserPosts([]);
+    }
+  };
+
+  // Fetch user's questions
+  const fetchUserQuestions = async () => {
+    if (!session?.user?.email) return;
+    try {
+      const response = await fetch(`/api/question?email=${encodeURIComponent(session.user.email)}`);
+      if (response.ok) {
+        const questions = await response.json();
+        setUserQuestions(Array.isArray(questions) ? questions : []);
+      }
+    } catch (error) {
+      console.error('Error fetching user questions:', error);
+      setUserQuestions([]);
+    }
+  };
+
+  // Fetch data when user session changes
+  useEffect(() => {
+    if (session?.user?.email) {
+      fetchUserPosts();
+      fetchUserQuestions();
+    }
+  }, [session]);
+
+  // Fetch bookmark data when tab changes to bookmarked sections
+  useEffect(() => {
+    if (session?.user?.email) {
+      if (activeTab === 'bookmarked-questions') {
+        fetchBookmarkedQuestions();
+      } else if (activeTab === 'bookmarked-blogs') {
+        fetchBookmarkedBlogs();
+      }
+    }
+  }, [activeTab, session]);
+
   const fetchBookmarkedQuestions = async () => {
     try {
-      console.log('Fetching bookmarks...');
       const response = await fetch('/api/bookmarks');
-      const bookmarks = await response.json();
-      console.log('Received bookmarks:', bookmarks);
+      const data = await response.json();
       
-      const questionIds = bookmarks
+      if (!data || !Array.isArray(data)) {
+        console.error('Invalid bookmarks data:', data);
+        setBookmarkedQuestions([]);
+        return;
+      }
+
+      const questionIds = data
         .filter(bookmark => bookmark.type === 'question')
         .map(bookmark => bookmark.questionId);
-      console.log('Question IDs:', questionIds);
 
       if (questionIds.length > 0) {
-        console.log('Fetching questions for IDs:', questionIds);
         const questionsResponse = await fetch(`/api/questions?ids=${questionIds.join(',')}`);
         const questions = await questionsResponse.json();
-        console.log('Received questions:', questions);
         setBookmarkedQuestions(questions);
       } else {
-        console.log('No bookmarked questions found');
         setBookmarkedQuestions([]);
       }
     } catch (error) {
       console.error('Error fetching bookmarked questions:', error);
+      setBookmarkedQuestions([]);
     }
   };
 
   const fetchBookmarkedBlogs = async () => {
     try {
-      console.log('Fetching bookmarked blogs...');
       const response = await fetch('/api/bookmarks');
-      const bookmarks = await response.json();
-      console.log('Received bookmarks:', bookmarks);
+      const data = await response.json();
       
-      const blogIds = bookmarks
+      if (!data || !Array.isArray(data)) {
+        console.error('Invalid bookmarks data:', data);
+        setBookmarkedBlogs([]);
+        return;
+      }
+
+      const blogIds = data
         .filter(bookmark => bookmark.type === 'blog')
         .map(bookmark => bookmark.blogId);
-      console.log('Blog IDs:', blogIds);
 
       if (blogIds.length > 0) {
-        console.log('Fetching blogs for IDs:', blogIds);
         const blogsResponse = await fetch(`/api/blogs?ids=${blogIds.join(',')}`);
         const blogs = await blogsResponse.json();
-        console.log('Received blogs:', blogs);
         setBookmarkedBlogs(blogs);
       } else {
-        console.log('No bookmarked blogs found');
         setBookmarkedBlogs([]);
       }
     } catch (error) {
       console.error('Error fetching bookmarked blogs:', error);
+      setBookmarkedBlogs([]);
     }
   };
-
-  useEffect(() => {
-    console.log('Profile page mounted, fetching bookmarks');
-    fetchBookmarkedQuestions();
-    fetchBookmarkedBlogs();
-  }, []);
-
-  // Add event listener for bookmark updates
-  useEffect(() => {
-    const handleBookmarkUpdate = () => {
-      console.log('Bookmark update event received');
-      fetchBookmarkedQuestions();
-      fetchBookmarkedBlogs();
-    };
-
-    window.addEventListener('bookmark-updated', handleBookmarkUpdate);
-    return () => {
-      window.removeEventListener('bookmark-updated', handleBookmarkUpdate);
-    };
-  }, []);
 
   useEffect(() => {
     // Update total bookmarks count whenever bookmarked questions or blogs change
@@ -125,27 +161,125 @@ export default function ProfilePage() {
     const file = e.target.files[0];
     if (!file) return;
 
+    // Store the current cover picture URL in case we need to revert
+    const previousCoverPicture = profile.coverPicture;
+
     try {
       setIsUploading(true);
-      // Create form data
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('type', 'cover');
+      
+      // Show immediate preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setProfile(prev => ({ ...prev, coverPicture: e.target.result }));
+      };
+      reader.readAsDataURL(file);
 
-      // Upload file
-      const uploadResponse = await fetch('/api/upload', {
+      // Upload directly to ImageBB
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await fetch(
+        `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMGBB_API_KEY}`,
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error('Failed to upload image to ImageBB');
+      }
+
+      // Update profile with the new image URL
+      const updateResponse = await fetch('/api/profile-update', {
         method: 'POST',
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...profile,
+          coverPicture: result.data.url
+        }),
       });
 
-      if (uploadResponse.ok) {
-        const { url } = await uploadResponse.json();
-        // Ensure the URL is in the correct format for ImageBB
-        const imageUrl = url.replace('https://ibb.co/', 'https://i.ibb.co/');
-        setProfile({ ...profile, coverPicture: imageUrl });
+      if (!updateResponse.ok) {
+        throw new Error('Failed to update profile');
       }
+
+      // Update the profile state with the permanent URL
+      setProfile(prev => ({ ...prev, coverPicture: result.data.url }));
     } catch (error) {
       console.error('Error uploading file:', error);
+      // Revert to previous cover picture if upload fails
+      setProfile(prev => ({ ...prev, coverPicture: previousCoverPicture }));
+      // Show error message to user
+      alert('Failed to upload image. Please try again.');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleProfilePictureUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Store the current profile picture URL in case we need to revert
+    const previousProfilePicture = profile.profilePicture;
+
+    try {
+      setIsUploading(true);
+      
+      // Show immediate preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setProfile(prev => ({ ...prev, profilePicture: e.target.result }));
+      };
+      reader.readAsDataURL(file);
+
+      // Upload directly to ImageBB
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await fetch(
+        `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMGBB_API_KEY}`,
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error('Failed to upload image to ImageBB');
+      }
+
+      // Update profile with the new image URL
+      const updateResponse = await fetch('/api/profile-update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...profile,
+          profilePicture: result.data.url
+        }),
+      });
+
+      if (!updateResponse.ok) {
+        throw new Error('Failed to update profile');
+      }
+
+      // Update the profile state with the permanent URL
+      setProfile(prev => ({ ...prev, profilePicture: result.data.url }));
+    } catch (error) {
+      console.error('Error uploading profile picture:', error);
+      // Revert to previous profile picture if upload fails
+      setProfile(prev => ({ ...prev, profilePicture: previousProfilePicture }));
+      // Show error message to user
+      alert('Failed to upload profile picture. Please try again.');
     } finally {
       setIsUploading(false);
     }
@@ -170,6 +304,7 @@ export default function ProfilePage() {
         if (updatedData) {
           setProfile({
             coverPicture: updatedData.coverPicture || "",
+            profilePicture: updatedData.profilePicture || "",
             bio: updatedData.bio || "",
             about: updatedData.about || "",
             location: updatedData.location || "",
@@ -198,14 +333,41 @@ export default function ProfilePage() {
       {/* Sidebar */}
       <div className="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 fixed h-full">
         <div className="p-4">
+          <div className="relative">
+            {profile.profilePicture ? (
+              <div className="relative w-32 h-32 mx-auto rounded-full overflow-hidden">
+                <Image
+                  src={profile.profilePicture}
+                  alt="Profile"
+                  fill
+                  className="object-cover"
+                />
+                <button
+                  onClick={() => profilePicInputRef.current?.click()}
+                  className="absolute bottom-0 right-0 bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 transition-colors"
+                >
+                  <UserPlus className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <div className="w-32 h-32 mx-auto rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                <button
+                  onClick={() => profilePicInputRef.current?.click()}
+                  className="text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400"
+                >
+                  <UserPlus className="w-8 h-8" />
+                </button>
+              </div>
+            )}
+            <input
+              type="file"
+              ref={profilePicInputRef}
+              className="hidden"
+              accept="image/*"
+              onChange={handleProfilePictureUpload}
+            />
+          </div>
           <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 rounded-full overflow-hidden">
-              <img
-                src={session.user?.image || "/assets/profile-pic.png"}
-                alt={session.user?.name}
-                className="w-full h-full object-cover"
-              />
-            </div>
             <div className="flex-1 min-w-0">
               <h2 className="text-sm font-medium text-gray-900 dark:text-white truncate">
                 {session.user?.name}
@@ -288,7 +450,7 @@ export default function ProfilePage() {
                 </div>
               )}
               {isEditing && (
-                <div className="absolute top-2 right-2">
+                <div className="absolute bottom-2 right-2">
                   <input
                     type="file"
                     ref={fileInputRef}
@@ -298,7 +460,7 @@ export default function ProfilePage() {
                   />
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className={`bg-white dark:bg-gray-800 p-2 rounded-full shadow hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                    className={`bg-white dark:bg-gray-800 p-2 rounded-full shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
                       isUploading ? 'opacity-50 cursor-not-allowed' : ''
                     }`}
                     disabled={isUploading}
@@ -306,7 +468,7 @@ export default function ProfilePage() {
                     {isUploading ? (
                       <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
                     ) : (
-                      <Camera className="w-4 h-4" />
+                      <Camera className="w-4 h-4 text-gray-600 dark:text-gray-300" />
                     )}
                   </button>
                 </div>
@@ -315,9 +477,9 @@ export default function ProfilePage() {
                 <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button
                     onClick={() => setIsEditing(true)}
-                    className="bg-white dark:bg-gray-800 p-2 rounded-full shadow"
+                    className="bg-white dark:bg-gray-800 p-2 rounded-full shadow-md"
                   >
-                    <Camera className="w-6 h-6" />
+                    <Camera className="w-6 h-6 text-gray-600 dark:text-gray-300" />
                   </button>
                 </div>
               )}
@@ -327,23 +489,36 @@ export default function ProfilePage() {
             <div className="flex items-end -mt-16 ml-8 mb-4">
               <div className="relative">
                 <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white dark:border-gray-800">
-                  <Image
-                    src={session.user?.image || "/assets/profile-pic.png"}
-                    alt={session.user?.name}
-                    width={128}
-                    height={128}
-                    className="w-full h-full object-cover"
-                  />
+                  {profile.profilePicture ? (
+                    <Image
+                      src={profile.profilePicture}
+                      alt={session.user?.name}
+                      width={128}
+                      height={128}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <Image
+                      src={session.user?.image || "/assets/profile-pic.png"}
+                      alt={session.user?.name}
+                      width={128}
+                      height={128}
+                      className="w-full h-full object-cover"
+                    />
+                  )}
                 </div>
                 {isEditing && (
-                  <button className="absolute bottom-0 right-0 bg-white dark:bg-gray-800 p-2 rounded-full shadow">
-                    <Edit2 className="w-4 h-4" />
+                  <button 
+                    onClick={() => profilePicInputRef.current?.click()}
+                    className="absolute bottom-0 right-0 bg-white dark:bg-gray-800 p-2 rounded-full shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    <Edit2 className="w-4 h-4 text-gray-600 dark:text-gray-300" />
                   </button>
                 )}
               </div>
               <div className="ml-6">
-                <h1 className="text-2xl font-bold text-blue-900 ">{session.user?.name}</h1>
-                <p className="text-blue-600 ">{session.user?.email}</p>
+                <h1 className="text-2xl font-bold text-white ">{session.user?.name}</h1>
+                <p className="text-white ">{session.user?.email}</p>
               </div>
             </div>
 
@@ -417,11 +592,11 @@ export default function ProfilePage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
               <h3 className="text-lg font-medium text-gray-900 dark:text-white">Total Posts</h3>
-              <p className="text-3xl font-bold text-blue-600 mt-2">24</p>
+              <p className="text-3xl font-bold text-blue-600 mt-2">{userPosts.length}</p>
             </div>
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
               <h3 className="text-lg font-medium text-gray-900 dark:text-white">Questions Asked</h3>
-              <p className="text-3xl font-bold text-blue-600 mt-2">12</p>
+              <p className="text-3xl font-bold text-blue-600 mt-2">{userQuestions.length}</p>
             </div>
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
               <h3 className="text-lg font-medium text-gray-900 dark:text-white">Bookmarks</h3>
@@ -435,9 +610,134 @@ export default function ProfilePage() {
               <div className="p-6">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Recent Posts</h2>
                 <div className="space-y-4">
-                  <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                    <p className="text-gray-500 dark:text-gray-400">No posts yet</p>
-                  </div>
+                  {userPosts.length > 0 ? (
+                    userPosts.map((blog) => (
+                      <div key={blog._id} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="w-10 h-10 rounded-full overflow-hidden">
+                            <img
+                              src={blog.image || "/assets/profile-pic.png"}
+                              alt={blog.name}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <div>
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                              {blog.name}
+                            </h3>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              Posted on {blog.postedAt ? new Date(blog.postedAt).toISOString().split('T')[0] : 'Unknown date'}
+                            </p>
+                          </div>
+                        </div>
+                        
+                        <div className="mb-4">
+                          <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                            {blog.title}
+                          </h4>
+                          <div 
+                            className="text-gray-600 dark:text-gray-300 prose dark:prose-invert max-w-none"
+                            dangerouslySetInnerHTML={{ __html: blog.content }}
+                          />
+                        </div>
+
+                        {blog.contentImage && blog.contentImage.length > 0 && (
+                          <div className="mb-4">
+                            <img
+                              src={blog.contentImage[0]}
+                              alt="Blog content"
+                              className="max-w-full h-auto rounded-lg"
+                            />
+                          </div>
+                        )}
+
+                        <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+                          <div className="flex items-center gap-1">
+                            <span>{blog.likes?.length || 0}</span>
+                            <span>Likes</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <span>{blog.comments?.length || 0}</span>
+                            <span>Comments</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                      <p className="text-gray-500 dark:text-gray-400">No posts yet</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {activeTab === "questions" && (
+              <div className="p-6">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Your Questions</h2>
+                <div className="space-y-4">
+                  {userQuestions.length > 0 ? (
+                    userQuestions.map((question) => (
+                      <div key={question._id} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="w-10 h-10 rounded-full overflow-hidden">
+                            <img
+                              src={question.image || "/assets/profile-pic.png"}
+                              alt={question.name}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <div>
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                              {question.name}
+                            </h3>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              Posted on {question.postedAt ? new Date(question.postedAt).toISOString().split('T')[0] : 'Unknown date'}
+                            </p>
+                          </div>
+                        </div>
+                        
+                        <div className="mb-4">
+                          <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                            {question.title}
+                          </h4>
+                          <div 
+                            className="text-gray-600 dark:text-gray-300 prose dark:prose-invert max-w-none"
+                            dangerouslySetInnerHTML={{ __html: question.content }}
+                          />
+                        </div>
+
+                        {question.contentImage && question.contentImage.length > 0 && (
+                          <div className="mb-4">
+                            <img
+                              src={question.contentImage[0]}
+                              alt="Question content"
+                              className="max-w-full h-auto rounded-lg"
+                            />
+                          </div>
+                        )}
+
+                        <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+                          <div className="flex items-center gap-1">
+                            <span>{question.likes?.length || 0}</span>
+                            <span>Likes</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <span>{question.dislikes?.length || 0}</span>
+                            <span>Dislikes</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <span>{question.comments?.length || 0}</span>
+                            <span>Comments</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                      <p className="text-gray-500 dark:text-gray-400">No questions yet</p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -462,7 +762,7 @@ export default function ProfilePage() {
                               {question.name}
                             </h3>
                             <p className="text-sm text-gray-500 dark:text-gray-400">
-                              Posted on {new Date(question.postedAt).toLocaleDateString()}
+                              Posted on {question.postedAt ? new Date(question.postedAt).toISOString().split('T')[0] : 'Unknown date'}
                             </p>
                           </div>
                         </div>
@@ -552,7 +852,7 @@ export default function ProfilePage() {
                               {blog.name}
                             </h3>
                             <p className="text-sm text-gray-500 dark:text-gray-400">
-                              Posted on {new Date(blog.postedAt).toLocaleDateString()}
+                              Posted on {blog.postedAt ? new Date(blog.postedAt).toISOString().split('T')[0] : 'Unknown date'}
                             </p>
                           </div>
                         </div>
@@ -614,17 +914,6 @@ export default function ProfilePage() {
                       </div>
                   </div>
                   )}
-                </div>
-              </div>
-            )}
-
-            {activeTab === "questions" && (
-              <div className="p-6">
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Your Questions</h2>
-                <div className="space-y-4">
-                  <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                    <p className="text-gray-500 dark:text-gray-400">No questions yet</p>
-                  </div>
                 </div>
               </div>
             )}

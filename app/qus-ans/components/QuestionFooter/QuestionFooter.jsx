@@ -17,33 +17,37 @@ import EditSection from "./components/EditSection";
 export default function QuestionBoxFooter({ card }) {
     const { data: session } = useSession();
     const [isBookmarked, setIsBookmarked] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
+    // Check if the question is already bookmarked when component mounts
     useEffect(() => {
-        // Check if the question is bookmarked by the current user
-        const checkBookmarkStatus = async () => {
-            if (session?.user?.email) {
-                try {
-                    const response = await fetch('/api/bookmarks');
-                    const bookmarks = await response.json();
-                    const isBookmarked = bookmarks.some(
-                        (bookmark) => bookmark.questionId === card._id && bookmark.type === 'question'
-                    );
-                    setIsBookmarked(isBookmarked);
-                } catch (error) {
-                    console.error('Error checking bookmark status:', error);
-                }
-            }
-        };
+        if (session && card?._id) {
+            checkBookmarkStatus();
+        }
+    }, [session, card?._id]);
 
-        checkBookmarkStatus();
-    }, [session, card._id]);
+    const checkBookmarkStatus = async () => {
+        try {
+            const response = await fetch('/api/bookmarks');
+            const bookmarks = await response.json();
+            
+            if (Array.isArray(bookmarks)) {
+                const isAlreadyBookmarked = bookmarks.some(
+                    bookmark => bookmark.type === 'question' && bookmark.questionId === card._id
+                );
+                setIsBookmarked(isAlreadyBookmarked);
+            }
+        } catch (error) {
+            console.error('Error checking bookmark status:', error);
+        }
+    };
 
     const handleBookmark = async () => {
-        if (!session) {
-            // Redirect to login or show a message
+        if (!session || isLoading) {
             return;
         }
 
+        setIsLoading(true);
         try {
             const response = await fetch('/api/bookmarks', {
                 method: isBookmarked ? 'DELETE' : 'POST',
@@ -58,11 +62,11 @@ export default function QuestionBoxFooter({ card }) {
 
             if (response.ok) {
                 setIsBookmarked(!isBookmarked);
-                // Dispatch event to notify other components
-                window.dispatchEvent(new Event('bookmark-updated'));
             }
         } catch (error) {
             console.error('Error toggling bookmark:', error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -97,6 +101,7 @@ export default function QuestionBoxFooter({ card }) {
                             className={`flex items-center space-x-2 hover:bg-gray-100 p-2 cursor-pointer ${
                                 isBookmarked ? 'text-blue-600' : ''
                             }`}
+                            disabled={isLoading}
                         >
                             <Bookmark className="w-4 h-4" />
                             <span>{isBookmarked ? 'Unbookmark' : 'Bookmark'}</span>
