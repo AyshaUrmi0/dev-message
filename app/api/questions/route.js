@@ -13,21 +13,29 @@ export async function GET(req) {
 
     const { searchParams } = new URL(req.url);
     const ids = searchParams.get('ids');
+    const email = searchParams.get('email');
     
-    if (!ids) {
-      return new Response(JSON.stringify({ error: "No question IDs provided" }), { status: 400 });
-    }
-
-    const questionIds = ids.split(',').map(id => new ObjectId(id));
     const collection = await dbConnect(collectionNameObj.questionCollection);
     
-    const questions = await collection.find({
-      _id: { $in: questionIds }
-    }).toArray();
-
-    return new Response(JSON.stringify(questions), { status: 200 });
+    // If email is provided, filter by email
+    if (email) {
+      const questions = await collection.find({ email }).toArray();
+      return new Response(JSON.stringify(questions), { status: 200 });
+    }
+    
+    // If ids are provided, filter by ids
+    if (ids) {
+      const questionIds = ids.split(',').map(id => new ObjectId(id));
+      const questions = await collection.find({
+        _id: { $in: questionIds }
+      }).toArray();
+      return new Response(JSON.stringify(questions), { status: 200 });
+    }
+    
+    // If neither provided, return empty array
+    return new Response(JSON.stringify([]), { status: 200 });
   } catch (error) {
     console.error("Error fetching questions:", error);
-    return new Response(JSON.stringify({ error: "Internal Server Error" }), { status: 500 });
+    return new Response(JSON.stringify([]), { status: 500 });
   }
 } 

@@ -13,10 +13,12 @@ export async function GET(req) {
     const collection = await dbConnect(collectionNameObj.bookmarkCollection);
     const bookmarks = await collection.find({ email: session.user.email }).toArray();
 
-    return new Response(JSON.stringify(bookmarks), { status: 200 });
+    // Always return the array, even if empty
+    return new Response(JSON.stringify(bookmarks || []), { status: 200 });
   } catch (error) {
     console.error("Error fetching bookmarks:", error);
-    return new Response(JSON.stringify({ error: "Internal Server Error" }), { status: 500 });
+    // Return empty array instead of error object
+    return new Response(JSON.stringify([]), { status: 500 });
   }
 }
 

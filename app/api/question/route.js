@@ -4,16 +4,17 @@ import dbConnect, { collectionNameObj } from "@/lib/dbConnect"
 import { NextResponse } from "next/server"
 
 // Getting all question collection data
-export const GET = async () => {
-    // const session = await getServerSession(authOptions)
-    // if (session) {
-    // const email = session?.user?.email // Uncomment this line if you need the email for filtering
-    const questionCollection = await dbConnect(collectionNameObj.questionCollection)
-    const result = await questionCollection.find({}).toArray()
-    return NextResponse.json(result)
-    // }
-
-    // return NextResponse.json({})
+export const GET = async (req) => {
+    const { searchParams } = new URL(req.url);
+    const email = searchParams.get('email');
+    
+    const questionCollection = await dbConnect(collectionNameObj.questionCollection);
+    
+    // If email is provided, filter by email
+    const query = email ? { email } : {};
+    const result = await questionCollection.find(query).toArray();
+    
+    return NextResponse.json(result);
 }
 
 // Posting to questionCollection
