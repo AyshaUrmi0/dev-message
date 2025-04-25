@@ -5,12 +5,14 @@ import { Bell, MessagesSquare } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect } from "react";
+import React, { Suspense, useEffect } from "react";
 import profilePic from "@/public/assets/profile-pic.png";
 import DrawerContentPage from "@/app/components/HomeCenter/components/DrawerContentPage";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import Notification from "./Notifications/Notifications";
+import Notification from "../../Notifications/Notifications";
+import LoadingPage from "@/app/loading";
+import SearchInputs from "./components/Search";
 
 
 // Delete this part when notification will dynamically work
@@ -113,12 +115,12 @@ export default function Navbar() {
         </Link>
         <ul className="menu menu-horizontal px-1 hidden lg:flex">{navLinks}</ul>
       </div>
-      <div className="navbar-center ">
-        <input
-          type="text"
-          placeholder="Search"
-          className="input input-bordered w-32 md:w-sm lg:w-96 text-black bg-white"
-        />
+      <div className="navbar-center relative">
+        {/* Search bar */}
+        <Suspense fallback={<div><LoadingPage /></div>}>
+          <SearchInputs />
+        </Suspense>
+        {/* <SearchWithAi /> */}
       </div>
       <div className="navbar-end">
         {status === "authenticated" ? (
