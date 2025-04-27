@@ -13,7 +13,7 @@ export default function PostInputCard() {
   useEffect(() => {
     const PostData = async () => {
       const { data: postedData } = await axios.get(
-        `http://localhost:3000/api/community/post/${user_name}`
+        `/api/community/post/${user_name}`
       );
       setCardData(postedData);
     };
