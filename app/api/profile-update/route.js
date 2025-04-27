@@ -28,12 +28,9 @@ export async function POST(req) {
     }
 
     const body = await req.json();
-    // console.log("Received profile data:", body);
-    // console.log("User Email:", session.user.email);
 
     const collection = await dbConnect(collectionNameObj.profileCollection);
     
-    // Update or insert profile
     const result = await collection.updateOne(
       { email: session.user.email },
       {
@@ -48,7 +45,6 @@ export async function POST(req) {
       { upsert: true }
     );
 
-    // console.log("MongoDB update result:", result);
     return new Response(JSON.stringify({ success: true }), { status: 200 });
   } catch (error) {
     console.error("Error saving profile:", error);

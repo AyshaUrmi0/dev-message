@@ -28,7 +28,6 @@ export default function EditSection({ id, card }) {
             setBlogContent(data?.content || '')
             return data
         } catch (error) {
-            console.log('Content not found')
             return null
         }
     }
@@ -48,11 +47,9 @@ export default function EditSection({ id, card }) {
         }
     }, [blogContent, setValue])
     const onSubmit = async (data) => {
-        console.log(data)
 
         try {
             const res = await axios.patch(`/api/single-blog/${id}/edit`, { content: data.content })
-            console.log('Blog updated:', res.data)
             toast.success('Post updated sucessfully')
             await fetchBlogContent()
         } catch (error) {

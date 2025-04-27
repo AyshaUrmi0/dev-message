@@ -9,7 +9,6 @@ const membersImages = ["", "", "", ""];
 
 export default function GroupList() {
   const { groups, isLoading, isError } = AllCommunity();
-  // console.log(groups, "groups==>")
   if (isLoading) return <Loading></Loading>;
   if (isError) return <p>Error loading groups</p>;
 

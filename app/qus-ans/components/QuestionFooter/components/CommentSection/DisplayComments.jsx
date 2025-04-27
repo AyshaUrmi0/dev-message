@@ -3,7 +3,6 @@ import profileImage from '@/public/assets/profile-pic.png'
 
 
 export default function DisplayComments({ allComments }) {
-    console.log(allComments)
     return (
         <div>
             {allComments?.map((commentInfo, index) => (

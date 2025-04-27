@@ -10,7 +10,6 @@ export default function DeleteSection({ id }) {
     const router = useRouter()
     const handleDelete = async (id) => {
         const resDelete = await axios.delete(`/api/single-blog/${id}`)
-        console.log(resDelete)
         toast.success('Blog deleted sucessfully')
         router.refresh()
 

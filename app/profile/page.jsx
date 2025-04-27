@@ -287,7 +287,6 @@ export default function ProfilePage() {
 
   const handleSaveProfile = async () => {
     try {
-      console.log("Saving profile data:", profile);
       const response = await fetch('/api/profile-update', {
         method: 'POST',
         headers: {
@@ -296,7 +295,6 @@ export default function ProfilePage() {
         body: JSON.stringify(profile),
       });
       if (response.ok) {
-        console.log("Profile saved successfully");
         setIsEditing(false);
         // Fetch the updated profile data
         const updatedResponse = await fetch('/api/profile-update');

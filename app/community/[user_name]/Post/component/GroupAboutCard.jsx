@@ -2,7 +2,7 @@ import { FaCalendarAlt, FaHeart, FaGlobe } from 'react-icons/fa';
 
 export default function GroupAboutCard() {
   return (
-    <div className="bg-black/25 shadow-md rounded-lg p-4">
+    <div className="border border-gray-600 shadow-md rounded-lg p-4">
       <h3 className="text-lg font-semibold mb-3">About</h3>
       <p className="text-sm text-white/95 mb-4">
         He moonlights difficult engrossed it, sportsmen. Interested has all Devonshire difficulty gay assistance joy.

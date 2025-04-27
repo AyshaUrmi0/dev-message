@@ -8,7 +8,6 @@ function RequestInfo() {
     const pathname=  usePathname()
     const path =pathname.split("/")[2]
       const {data, isLoading, isError, refetch} = useGroupInfo(path)
-      console.log(data)
   return (
     <div>
         <ShowRequestInfo data={data} isLoading={isLoading} refetch={refetch}></ShowRequestInfo>

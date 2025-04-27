@@ -1,7 +1,9 @@
 "use client";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 function InviteFriend() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -10,7 +12,8 @@ function InviteFriend() {
   const [selectedFriends, setSelectedFriends] = useState([]);
   const [friendData, setFriendData] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
-
+  const pathname = usePathname();
+  const user_name = pathname.split("/")[2];
   const { data } = useSession();
 
   const handleSelect = (name) => {
@@ -32,9 +35,7 @@ function InviteFriend() {
   useEffect(() => {
     const fetchFriendData = async () => {
       try {
-        const response = await axios.get(
-          `/api/friend/${data?.user?.email}`
-        );
+        const response = await axios.get(`/api/friend/${data?.user?.email}`);
         setFriendData(response.data);
       } catch (error) {
         console.error("Error fetching friend data:", error);
@@ -44,6 +45,15 @@ function InviteFriend() {
       fetchFriendData();
     }
   }, [data?.user?.email]);
+
+  const handleInvite = async () => {
+    const invite = friendName;
+    const {data} = await axios.post("/api/community", { invite, user_name });
+    if(data){
+      document.getElementById("invite_friend")?.close();
+      toast.success("Invited member successfully")
+    }
+  };
 
   return (
     <dialog id="invite_friend" className="modal modal-middle">
@@ -56,10 +66,11 @@ function InviteFriend() {
           >
             ✕
           </button>
-          <h2 className="text-xl font-semibold mb-4">Invite Friend</h2>
+          <h2 className="text-xl text-black/70 font-semibold mb-4">
+            Invite Friend
+          </h2>
           <div className="space-y-4">
             <div className="relative">
-              <label className="block text-gray-600">Invite friends</label>
               <div
                 onClick={() => setShowDropdown(!showDropdown)}
                 className="w-full cursor-pointer text-sm mt-2 p-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-700"
@@ -74,7 +85,7 @@ function InviteFriend() {
                   <input
                     type="text"
                     placeholder="Search..."
-                    className="w-full p-2 border-b border-gray-300"
+                    className="w-full p-2 text-black/80 border-b border-gray-300"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
@@ -89,7 +100,7 @@ function InviteFriend() {
                         }`}
                         onClick={() => handleSelect(friend.name)}
                       >
-                        <span>{friend.name}</span>
+                        <span className="text-gray-700">{friend.name}</span>
                         {selectedFriends.includes(friend.name) && (
                           <span className="text-green-500 font-bold">
                             &#10003;
@@ -105,7 +116,11 @@ function InviteFriend() {
             </div>
 
             <div className="flex justify-end">
-              <button className="bg-green-500 text-white px-4 py-2 rounded">
+              <button
+                onClick={handleInvite}
+                type="button"
+                className="bg-green-500 text-white px-4 py-2 rounded"
+              >
                 Invite
               </button>
             </div>

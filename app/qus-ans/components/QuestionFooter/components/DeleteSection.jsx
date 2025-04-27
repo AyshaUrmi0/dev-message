@@ -10,7 +10,6 @@ export default function DeleteSection({ id }) {
     const router = useRouter()
     const handleDelete = async (id) => {
         const resDelete = await axios.delete(`/api/single-qus/${id}`)
-        console.log(resDelete)
         toast.success('Question deleted sucessfully')
         router.refresh()
 

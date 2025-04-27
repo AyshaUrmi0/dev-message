@@ -17,7 +17,6 @@ const ChatPage = () => {
     if (userInfo) {
       setUser(JSON.parse(userInfo));
     }
-    // console.log("userInfo>>>", userInfo);
   }, []);
 
   if (!user) return <div><Skeleton /><Skeleton /></div>;

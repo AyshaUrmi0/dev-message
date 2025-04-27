@@ -34,7 +34,6 @@ export default function RegisterInputs() {
     const passwordValue = watch("password")
 
     const onSubmit = async (data) => {
-        console.log(data)
         const { confirmPassword } = data
 
         if (data.password !== confirmPassword) {
@@ -50,7 +49,6 @@ export default function RegisterInputs() {
 
         try {
             const res = await registerUser(regInputs)
-            console.log("User Registered:", res)
             if (res?.insertedId) {
                 toast.success("User registered successfully", {
                     duration: 2000,

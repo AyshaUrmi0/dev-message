@@ -46,7 +46,6 @@ export default function Navbar() {
           `${process.env.NEXT_PUBLIC_CHAT_EXPRESS_SERVER}/api/user/getuser/${email}`
         );
         const userData = response.data;
-        console.log("User Data:", userData);
         localStorage.setItem("userInfo", JSON.stringify(userData));
       } catch (error) {
         console.error("Error fetching user data:", error);

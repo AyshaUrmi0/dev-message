@@ -3,7 +3,7 @@ import AllMemberInfo from "./component/AllMemberInfo"
 function page() {
 
   return (
-    <div>
+    <div className="min-h-screen">
         <AllMemberInfo></AllMemberInfo>
     </div>
   )
