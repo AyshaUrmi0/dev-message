@@ -14,29 +14,9 @@ import Notification from "../../Notifications/Notifications";
 import LoadingPage from "@/app/loading";
 import SearchInputs from "./components/Search";
 
-
-// Delete this part when notification will dynamically work
-// const notifications = [
-//   {
-//     title: "Your call has been confirmed.",
-//     description: "1 hour ago",
-//   },
-//   {
-//     title: "You have a new message!",
-//     description: "1 hour ago",
-//   },
-//   {
-//     title: "Your subscription is expiring soon!",
-//     description: "2 hours ago",
-//   },
-// ];
-
-
 export default function Navbar() {
   const { data: session, status } = useSession();
   const router = useRouter();
-
-  // Set User to localStorage form DB;
   const email = session?.user.email || null;
 
   const setUserInLocalStorage = async () => {
@@ -46,7 +26,6 @@ export default function Navbar() {
           `${process.env.NEXT_PUBLIC_CHAT_EXPRESS_SERVER}/api/user/getuser/${email}`
         );
         const userData = response.data;
-        console.log("User Data:", userData);
         localStorage.setItem("userInfo", JSON.stringify(userData));
       } catch (error) {
         console.error("Error fetching user data:", error);

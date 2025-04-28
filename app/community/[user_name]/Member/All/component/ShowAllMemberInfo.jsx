@@ -3,13 +3,12 @@ import ShowMember from "./ShowMember";
 import ShowAllAdmin from "./ShowAllAdmin";
 
 function ShowAllMemberInfo({ data, isLoading, refetch }) {
-  console.log(data[0], "show data");
   const members = data[0];
   return (
     <div className="my-5">
-      <div className="bg-black/45 px-4 py-2 shadow-sm rounded-md">
+      <div className="px-4 py-2 shadow-sm rounded-md">
         {members?.Owner?.map((owner, index) => (
-          <div className="flex items-center justify-between" key={index}>
+          <div className="flex items-center border-b pb-6 border-gray-500 justify-between" key={index}>
             <div className="flex items-center">
               <Image
                 src={
@@ -23,7 +22,7 @@ function ShowAllMemberInfo({ data, isLoading, refetch }) {
                 className="h-[40px] w-[40px] rounded-full"
               ></Image>
             <div className="flex ml-8 flex-col">
-              <p className="text-gray-700 font-semibold">{owner?.name}</p>
+              <p className="text-white/90 font-semibold">{owner?.name}</p>
               <p className="text-sm text-gray-500">{owner?.email}</p>
             </div>
             </div>

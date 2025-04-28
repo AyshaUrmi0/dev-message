@@ -13,7 +13,7 @@ function GroupTab() {
   const pathParts = pathname.split("/");
   const path = pathParts[2];
   const currentTab = pathParts[3];
-  const tab = ["Post", "About", "Member", "Post Authorization"];
+  const tab = ["Post", "Member", "Post Authorization"];
 
   useEffect(() => {
     if (!currentTab) {
@@ -25,7 +25,7 @@ function GroupTab() {
   const userInfo = useGroupUserInfo(path, session?.data?.user?.email)
   const tabs = userInfo?.accessibility === "Owner" || userInfo?.accessibility === "Admin" ? tab : tab.slice(0, 3);
   return (
-    <div className="mt-4 border-b border-gray-300">
+    <div className="mt-4 border-b border-gray-500">
       <div className="flex space-x-6">
         {tabs.map((tab) => (
           <Link

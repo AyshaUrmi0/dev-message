@@ -15,8 +15,6 @@ export async function POST(req, { params }) {
   const userInfo = await dbConnect(collectionNameObj.userCollection);
   const userData = await userInfo.findOne({ email });
 
-  console.log(userData, "data returned");
-
   if (!userData) {
     return NextResponse.json({ message: "User not found" }, { status: 404 });
   }

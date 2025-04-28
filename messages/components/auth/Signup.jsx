@@ -31,7 +31,6 @@ const Signup = () => {
             setPicLoading(false);
             return;
         }
-        console.log(name, email, password);
         // Add your signup logic here
         // use axios to send a post request to the backend with the user data
         try {
@@ -41,7 +40,6 @@ const Signup = () => {
                 password,
                 pic,
             });
-            console.log(data);
 
             // localStorage.setItem("userInfo", JSON.stringify(data));
             setPicLoading(false);
@@ -49,7 +47,6 @@ const Signup = () => {
             router.push("/messages/chats");
         }
         catch (error) {
-            console.log(error);
             alert("Error Occurred While Signing Up");
             setPicLoading(false);
         }
@@ -78,7 +75,6 @@ const Signup = () => {
                     setPicLoading(false);
                 })
                 .catch((err) => {
-                    console.log(err);
                     setPicLoading(false);
                 });
         } else {

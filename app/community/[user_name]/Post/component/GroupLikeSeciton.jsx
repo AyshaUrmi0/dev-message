@@ -6,7 +6,7 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
-export default function LikeSection({ card }) {
+export default function GroupLikeSeciton({ card }) {
     const session = useSession()
     const postId = card?._id
     const [likeCount, setLikeCount] = useState(card?.likes?.length || 0);
@@ -15,21 +15,19 @@ export default function LikeSection({ card }) {
     // fetching questionLike data
     const fetchQusData = async () => {
         try {
-            const { data } = await axios(`/api/single-blog/${postId}`);
+            const { data } = await axios(`/api/community/post/upvote/${postId}`);
             setLikeCount(data?.likes?.length || 0);
             setHashLikeCount(data?.likes?.includes(session?.data?.user?.email));
         } catch (error) {
             console.error("Error fetching questionLike data:", error);
         }
     }
-
-    // Like/Dislike Functionality
     const updateLike = async () => {
         try {
             const userEmail = session?.data?.user?.email;
             if (!userEmail) return;
 
-            const response = await axios.patch(`/api/single-blog/${postId}/upvote`, {
+            const response = await axios.patch(`/api/community/post/upvote/${postId}`, {
                 user: userEmail,
             });
 

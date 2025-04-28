@@ -34,7 +34,6 @@ export default function LikeSection({ card }) {
                 user: userEmail,
             });
 
-            console.log("Like updated:", response.data);
             // Refresh the likes count in UI 
             await fetchQusData()
         } catch (error) {

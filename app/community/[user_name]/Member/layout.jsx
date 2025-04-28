@@ -4,7 +4,7 @@ export default function DashboardLayout({
     children
   }) {
     return (
-      <div className="min-h-screen bg-black/25 shadow-md rounded-lg p-4">
+      <div className="min-h-screen border border-gray-500 shadow-md rounded-lg p-4">
         <MemberTab></MemberTab>
         {children}
       </div>

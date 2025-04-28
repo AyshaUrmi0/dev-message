@@ -31,12 +31,9 @@ export default function CommentSection({ card }) {
             const { data } = await axios(`/api/single-blog/${card?._id}`);
             // setAllComments(data?.comments || [])
             setAllComments(data?.comments || [])
-            console.log(data)
         } catch (error) {
             console.error("Error fetching questionLike data:", error);
-            // setError("Failed to load comments");
         } finally {
-            // setLoading(false);
         }
     }
     const onSubmit = async (data) => {
@@ -51,12 +48,9 @@ export default function CommentSection({ card }) {
             userImage: session?.user?.image,
             comment: data.comment,
         };
-        console.log("Comment data:", commentUserData);
         try {
             const response = await axios.patch(`/api/single-blog/${card?._id}/comment`, commentUserData);
-            console.log("Comment response:", response.data);
             toast.success("Comment added successfully!");
-            // Optionally, you can refresh the comments or perform any other action here
             fetchQusData()
             reset();
         } catch (error) {
