@@ -16,7 +16,16 @@ export default function EditSection({ id, card }) {
     const onSubmit = async (data) => {
         console.log(data)
 
-       
+        try {
+            const res = await axios.patch(`/api/single-blog/${id}/edit`, { content: data.content })
+            console.log('Blog updated:', res.data)
+            toast.success('Post updated sucessfully')
+            document.getElementById('my_modal_4').close()
+            router.refresh()
+        } catch (error) {
+            console.error('Post edit failed')
+            toast.error('Post edit failed')
+        }
     }
     return (
         <>
