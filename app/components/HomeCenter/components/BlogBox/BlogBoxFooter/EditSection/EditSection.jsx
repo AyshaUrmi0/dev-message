@@ -11,7 +11,17 @@ import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 
 export default function EditSection({ id, card }) {
-   
+    const router = useRouter()
+    const { data: session } = useSession()
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
+        defaultValues: {
+            content: card?.content || '',
+        },
+    })
 
     const onSubmit = async (data) => {
         console.log(data)
