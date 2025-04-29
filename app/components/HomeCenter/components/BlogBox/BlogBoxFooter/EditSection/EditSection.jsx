@@ -38,7 +38,7 @@ export default function EditSection({ id, card }) {
                                 <p className="text-red-500 text-sm">{errors.content.message}</p>
                             )}
                         </div>
-                       
+                        <Button type="submit">Save changes</Button>
                     </form>
                 </div>
             </dialog>
