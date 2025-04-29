@@ -118,8 +118,6 @@ function GroupPostModal() {
   const userInfo = axios.get(
     `/api/users/${data?.user?.email}`
   );
-  console.log(userInfo, "use info");
-
   return (
     <dialog id="group_post_modal" className="modal modal-middle">
       <form className="fixed inset-0 flex justify-center items-center p-4">

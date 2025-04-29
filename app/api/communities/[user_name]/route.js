@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 
 export async function GET(req, { params }) {
   const { user_name } = params;
-  console.log(user_name, "user_name");
   const communityCollection = await dbConnect(collectionNameObj.communityCollection);
   const data = await communityCollection.findOne({ user_name });
 
@@ -22,7 +21,7 @@ export async function GET(req, { params }) {
     { $unwind: "$members" },
     {
       $lookup: {
-        from: "user",
+        from: "users",
         localField: "members.member",
         foreignField: "name",
         as: "userDetails"
@@ -42,7 +41,7 @@ export async function GET(req, { params }) {
           group_user_name: "$members.user_name",
           user_name: "$userDetails.user_name",
           email: "$userDetails.email",
-          user_photo: "$userDetails.user_photo"
+          user_photo: "$userDetails.image"
         }
       }
     },
@@ -126,7 +125,6 @@ export async function GET(req, { params }) {
 export async function PATCH(req, { params }) {
   const { member } = await req.json();
   const { user_name } = params;
-  console.log(user_name, member);
   const groupMemberCollection = await dbConnect(collectionNameObj.groupMemberCollection);
   const result = await groupMemberCollection.updateOne({ member, user_name }, {
     $set: {
@@ -141,6 +139,5 @@ export async function DELETE(req, { params }) {
   const member = req.headers.get("member") || req.nextUrl.searchParams.get("member");
   const groupMemberCollection = await dbConnect(collectionNameObj.groupMemberCollection);
   const result = await groupMemberCollection.deleteOne({ user_name, member });
-  console.log(result);
   return NextResponse.json(result);
 }

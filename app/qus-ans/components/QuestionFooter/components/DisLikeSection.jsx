@@ -33,8 +33,6 @@ export default function DisLikeSection({ card }) {
                 user: userEmail,
             });
 
-            console.log("Like updated:", response.data);
-            // Refresh the dislikes count in UI 
             await fetchQusData()
         } catch (error) {
             console.error("Error updating like:", error);

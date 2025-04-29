@@ -5,7 +5,6 @@ import { ChatState } from "../Context/ChatProvider";
 import axios from "axios";
 import io from "socket.io-client";
 import { FaArrowLeft } from "react-icons/fa";
-import { getSender, getSenderImage } from "../config/ChatLogics";
 import ScrollableChat from './ScrollableChat';
 import { CiLocationArrow1 } from "react-icons/ci";
 import { IoMdMore } from "react-icons/io";
@@ -51,7 +50,6 @@ const SingleChat = () => {
 
             socket.emit("join chat", selectedChat._id);
         } catch (error) {
-            console.log(error);
         }
     };
 
@@ -106,7 +104,6 @@ const SingleChat = () => {
                 socket.emit("new message", data);
                 setMessages([...messages, data]);
             } catch (error) {
-                console.log(error);
             }
         }
     };
@@ -132,7 +129,6 @@ const SingleChat = () => {
                 socket.emit("new message", data);
                 setMessages([...messages, data]);
             } catch (error) {
-                console.log(error);
             }
         }
     }
@@ -161,7 +157,6 @@ const SingleChat = () => {
     const handelMoreOptions = (chat) => {
         // if (!chat.isGroupChat) return;
         // setSelectedChat(chat);
-        console.log("More Options clicked", chat);
     }
 
     return (

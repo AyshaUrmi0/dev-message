@@ -7,7 +7,6 @@ function InviteMemberInfo() {
      const pathname=  usePathname()
         const path =pathname.split("/")[2]
           const {data, isLoading, isError, refetch} = useGroupInfo(path)
-          console.log(data)
   return (
     <div>
         <ShowInvitedMember data={data} refetch={refetch}></ShowInvitedMember>

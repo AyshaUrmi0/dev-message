@@ -83,14 +83,19 @@ yarn install
 
 3. Create a `.env.local` file in the root directory and add the following environment variables:
 ```env
-MONGODB_URI=your_mongodb_connection_string
-NEXTAUTH_SECRET=your_nextauth_secret
-NEXTAUTH_URL=http://localhost:3000
-EMAIL_SERVER_HOST=your_email_server_host
-EMAIL_SERVER_PORT=your_email_server_port
-EMAIL_SERVER_USER=your_email_server_user
-EMAIL_SERVER_PASSWORD=your_email_server_password
-EMAIL_FROM=your_email_from_address
+MONGODB_URI= # MongoDB Connection String
+DB_NAME= # Database Name
+NEXTAUTH_URL= # Application URL for NextAuth Authentication
+NEXT_PUBLIC_IMGBB_API_KEY= # API Key for Image Upload (IMGBB)
+NEXTAUTH_SECRET= # Secret Key for NextAuth Authentication
+GOOGLE_CLIENT_ID= # Google OAuth Client ID
+GOOGLE_CLIENT_SECRET= # Google OAuth Client Secret
+GITHUB_ID= # GitHub OAuth Client ID
+GITHUB_SECRET= # GitHub OAuth Client Secret
+EMAIL_USER= # Email Address for Sending Emails
+EMAIL_PASS= # Email Password or App-Specific Password
+NEXT_PUBLIC_CHAT_EXPRESS_SERVER= # Chat Server URL (Express.js)
+GEMINI_API_KEY= # API Key for Gemini Service
 ```
 
 4. Run the development server:

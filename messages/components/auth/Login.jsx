@@ -22,12 +22,10 @@ const Login = () => {
         }
 
         try {
-            console.log(`${process.env.NEXT_PUBLIC_CHAT_EXPRESS_SERVER}/api/user/login`);
             const { data } = await axios.post(`https://katha-koi.onrender.com/api/user/login`, {
                 email,
                 password,
             });
-            console.log(data);
 
             // localStorage.setItem("userInfo", JSON.stringify(data));
             setLoading(false);
@@ -35,7 +33,6 @@ const Login = () => {
             router.push("/messages/chats");
         }
         catch (error) {
-            console.log(error);
             alert("Error Occurred While Login");
             setLoading(false);
         }

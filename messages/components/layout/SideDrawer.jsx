@@ -35,15 +35,11 @@ const SideDrawer = () => {
 
       setLoading(false);
       setSearchResult(data);
-      console.log(data);
     } catch (error) {
-      console.log(error);
     }
   }
 
   const accessChat = async (userId) => {
-    console.log(userId);
-
     try {
       // setLoadingChat(true);
       const config = {
@@ -59,7 +55,6 @@ const SideDrawer = () => {
       // setLoadingChat(false);
       // onClose();
     } catch (error) {
-      console.log(error);
     }
   };
 

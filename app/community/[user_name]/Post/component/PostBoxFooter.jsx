@@ -1,22 +1,26 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
 import { Flag, MoreVertical } from 'lucide-react'
-import LikeSection from './LikeSection/LikeSection'
-import EditSection from './EditSection/EditSection'
-import DeleteSection from './DeleteSection/DeleteSection'
-import CommentSection from './CommentSection/CommentSection'
-import BookmarkSection from './BookMarkSection/Bookmarksection'
+// import LikeSection from './LikeSection/LikeSection'
+// import EditSection from './EditSection/EditSection'
+// import DeleteSection from './DeleteSection/DeleteSection'
+// import CommentSection from './CommentSection/CommentSection'
+import BookmarkSection from '@/app/components/HomeCenter/components/BlogBox/BlogBoxFooter/BookMarkSection/Bookmarksection'
+import DeleteSection from '@/app/components/HomeCenter/components/BlogBox/BlogBoxFooter/DeleteSection/DeleteSection'
+import EditSection from '@/app/components/HomeCenter/components/BlogBox/BlogBoxFooter/EditSection/EditSection'
+import GroupLikeSeciton from './GroupLikeSeciton'
+import GroupCommentSection from './GroupCommentSeciton'
 // import BookmarkSection from './BookMarkSection/Bookmarksection'
 
-export default function BlogBoxFooter({ card }) {
+export default function PostBoxFooter({ card }) {
   return (
     <>
       <div className="flex justify-center items-center space-x-4">
         {/* Upvote Button */}
-        <LikeSection card={card} />
+        <GroupLikeSeciton card={card} />
 
         {/* Comments */}
-        <CommentSection card={card} />
+        <GroupCommentSection card={card} />
       </div>
 
       <div>
@@ -28,8 +32,11 @@ export default function BlogBoxFooter({ card }) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="bg-white text-black p-2 rounded-lg shadow-md">
+            {/* Edit */}
             <EditSection id={card._id} card={card} />
+            {/* Delete button */}
             <DeleteSection id={card._id} />
+            {/* Bookmark */}
             <BookmarkSection card={card} />
             <DropdownMenuItem className="flex items-center space-x-2 hover:bg-gray-100 p-2 cursor-pointer text-red-500">
               <Flag className="w-4 h-4" />

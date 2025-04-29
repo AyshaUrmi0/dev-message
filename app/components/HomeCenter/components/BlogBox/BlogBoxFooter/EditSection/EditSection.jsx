@@ -13,6 +13,20 @@ import toast from "react-hot-toast"
 export default function EditSection({ id, card }) {
     const router = useRouter()
     const { data: session } = useSession()
+    const [blogContent, setBlogContent] = useState('')
+    const fetchBlogContent = async () => {
+        try {
+            const { data } = await axios(`/api/single-blog/${id}/edit`)
+            setBlogContent(data?.content || '')
+            return data
+        } catch (error) {
+            console.log('Content not found')
+            return null
+        }
+    }
+    useEffect(() => {
+        fetchBlogContent()
+    }, [id])
     const {
         register,
         handleSubmit,
@@ -24,11 +38,9 @@ export default function EditSection({ id, card }) {
     })
 
     const onSubmit = async (data) => {
-        console.log(data)
 
         try {
             const res = await axios.patch(`/api/single-blog/${id}/edit`, { content: data.content })
-            console.log('Blog updated:', res.data)
             toast.success('Post updated sucessfully')
             document.getElementById('my_modal_4').close()
             router.refresh()

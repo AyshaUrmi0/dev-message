@@ -26,7 +26,6 @@ export default function LoginInputs() {
   const [loginError, setLoginError] = useState(null)
 
   const onSubmit = async (data) => {
-    console.log(data)
     try {
       const res = await signIn("credentials", {
         email: data.email,

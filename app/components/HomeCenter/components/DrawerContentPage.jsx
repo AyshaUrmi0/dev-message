@@ -31,8 +31,6 @@ export default function DrawerContentPage() {
 
     const onSubmit = async (data) => {
         try {
-            console.log(data);
-
             const userQuery = {
                 name: session?.user?.name,
                 email: session?.user?.email,
@@ -45,12 +43,8 @@ export default function DrawerContentPage() {
                 likes: [],
                 dislikes: [],
             };
-            console.log(userQuery);
-
             const apiEndpoint = data.postType === 'blog' ? `/api/blog` : `/api/question`;
-
             const { data: dataPost } = await axios.post(apiEndpoint, userQuery)
-            console.log(dataPost)
             if (dataPost.acknowledged === true) {
                 reset()
                 toast.success(`Your ${data?.postType} posted successfully`);

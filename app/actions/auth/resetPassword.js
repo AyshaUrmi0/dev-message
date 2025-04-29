@@ -5,15 +5,8 @@ import bcrypt from "bcryptjs"
 
 export const resetPassword = async (email, token, newPassword) => {
   try {
-    console.log(`Starting resetPassword for email=${email}, token=${token}`)
-
     const userCollection = dbConnect(collectionNameObj.userCollection)
-    
-    // Log the current user state before the update
     const userBefore = await userCollection.findOne({ email })
-    console.log("User before reset:", userBefore)
-
-    // Find user with valid token and non-expired token
     const user = await userCollection.findOne({
       email,
       resetToken: token,
@@ -43,7 +36,6 @@ export const resetPassword = async (email, token, newPassword) => {
       }
     )
 
-    console.log("Update result:", updateResult)
 
     if (updateResult.modifiedCount === 0) {
       console.error(`Reset password failed: No document modified for email=${email}`)
@@ -52,9 +44,6 @@ export const resetPassword = async (email, token, newPassword) => {
 
     // Log the user state after the update
     const userAfter = await userCollection.findOne({ email })
-    console.log("User after reset:", userAfter)
-
-    console.log(`Password reset successful for email=${email}`)
     return { success: "Password reset successful" }
   } catch (error) {
     console.error(`Reset password error for email=${email}:`, error)
