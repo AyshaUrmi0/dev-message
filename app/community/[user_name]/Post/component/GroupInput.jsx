@@ -1,4 +1,3 @@
-'use client'
 
 import { useSession } from "next-auth/react"
 import Image from "next/image"
@@ -11,7 +10,7 @@ import profilePic from "@/public/assets/profile-pic.png"
 // import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button"
 import GroupPost from "@/app/community/[user_name]/Post/component/GroupPost"
 
-export default function GroupInput() {
+export default function GroupInput({mutate}) {
     const { data: session } = useSession()
 
     return (
@@ -46,7 +45,7 @@ export default function GroupInput() {
             </div>
             {/* DrawerContentPage Here */}
             {/* <DrawerContentPage /> */}
-            <GroupPost></GroupPost>
+            <GroupPost mutate={mutate}></GroupPost>
         </Drawer>
     )
 }

@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-function ShowAllAdmin({members, refetch}) {
+function ShowAllAdmin({members,mutate}) {
   return (
     <div>
       <div className="mt-4 px-4 py-2 shadow-sm rounded-md">
@@ -19,7 +19,7 @@ function ShowAllAdmin({members, refetch}) {
                 className="h-[40px] w-[40px] rounded-full"
               ></Image>
               <div className="flex ml-8 flex-col">
-                <p className="text-gray-700 font-semibold">{owner?.name}</p>
+                <p className="text-white/90 font-semibold">{owner?.name}</p>
                 <p className="text-sm text-gray-500">{owner?.email}</p>
               </div>
             </div>

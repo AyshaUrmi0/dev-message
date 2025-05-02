@@ -4,7 +4,7 @@ import GroupPostLeftSideBar from "./component/GroupPostLeftSideBar"
 
 function GroupPostPage() {
   return (
-    <div className="flex gap-4">
+    <div className="flex min-h-screen gap-4">
         <div className="w-4/6">
             <GroupPostLeftSideBar></GroupPostLeftSideBar>
         </div>
