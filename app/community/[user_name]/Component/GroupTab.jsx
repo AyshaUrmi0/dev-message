@@ -13,7 +13,7 @@ function GroupTab() {
   const pathParts = pathname.split("/");
   const path = pathParts[2];
   const currentTab = pathParts[3];
-  const tab = ["Post", "Member", "Post Authorization"];
+  const tab = ["Post", "Member"];
 
   useEffect(() => {
     if (!currentTab) {

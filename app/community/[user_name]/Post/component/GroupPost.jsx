@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 import { Button } from "@/components/ui/button";
 import {
   DrawerClose,
@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/drawer";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter} from "next/navigation";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -20,7 +20,7 @@ import RichTextEiditor from "@/app/components/rich-text-eiditor/index";
 // import RichTextEiditor from "@/components/rich-text-eiditor";
 // import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button";
 
-export default function GroupPost() {
+export default function GroupPost({mutate}) {
   const { data: session } = useSession();
   const router = useRouter();
   const [selectedPostType, setSelectedPostType] = useState("blog");
@@ -51,10 +51,11 @@ export default function GroupPost() {
       if (dataPost.acknowledged === true) {
         reset();
         toast.success(`Your ${data?.postType} posted successfully`);
+        // router.push(pathname);
         if (drawerCloseRef.current) {
           drawerCloseRef.current.click();
         }
-        router.refresh();
+        mutate()
       } else {
         toast.error("Failed to post your content");
       }

@@ -1,14 +1,8 @@
-import axios from "axios";
 import Image from "next/image";
+import InviteCencel from "./InviteCencel";
 
 function ShowInvitedMember({ data, refetch }) {
-  const invited = data[0];
-  const handleDelete = async (invite) => {
-    await axios.delete(`/api/communities/${invite?.group_user_name}`, {
-      headers: { member: invite?.name },
-    });
-    refetch();
-  };
+  const invited = data
   return (
     <div>
       <div className="mt-4 px-4 py-2 shadow-sm rounded-md">
@@ -38,12 +32,7 @@ function ShowInvitedMember({ data, refetch }) {
               <p className="text-center bg-orange-300 cursor-pointer hover:bg-orange-500 duration-500 text-white py-1 px-3 rounded-md text-sm mr-6">
                 {invite?.accessibility}
               </p>
-              <button
-                onClick={() => handleDelete(invite)}
-                className="text-center cursor-pointer hover:bg-red-700 duration-500 bg-red-500 text-white font-semibold text-sm py-1 px-3 rounded-md mr-4"
-              >
-                Cencel
-              </button>
+             <InviteCencel></InviteCencel>
             </div>
           </div>
         ))}

@@ -1,14 +1,14 @@
 import Image from "next/image";
 import ShowMember from "./ShowMember";
 import ShowAllAdmin from "./ShowAllAdmin";
+import Admin_Request from "./Admin_Request";
 
-function ShowAllMemberInfo({ data, isLoading, refetch }) {
-  const members = data[0];
+function ShowAllMemberInfo({ members, mutate}) {
   return (
     <div className="my-5">
       <div className="px-4 py-2 shadow-sm rounded-md">
         {members?.Owner?.map((owner, index) => (
-          <div className="flex items-center border-b pb-6 border-gray-500 justify-between" key={index}>
+          <div className="flex items-center border-b pb-6 border-gray-300 justify-between" key={index}>
             <div className="flex items-center">
               <Image
                 src={
@@ -32,8 +32,9 @@ function ShowAllMemberInfo({ data, isLoading, refetch }) {
           </div>
         ))}
       </div>
-      <ShowAllAdmin members={members} refetch={refetch}></ShowAllAdmin>
-      <ShowMember members={members} refetch={refetch}></ShowMember>
+      <ShowAllAdmin members={members} mutate={mutate}></ShowAllAdmin>
+      <Admin_Request members={members} mutate={mutate}></Admin_Request>
+      <ShowMember members={members} mutate={mutate}></ShowMember>
 
     </div>
   );

@@ -1,62 +1,87 @@
 "use client";
 import Image from "next/image";
 import { FaCheck, FaPlus, FaEllipsisH } from "react-icons/fa";
-import GroupTab from "./GroupTab";
+// import GroupTab from "./GroupTab";
 import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
-import { useGroupInfo } from "../Member/component/CommunityUserInfo";
-import InviteFriend from "./InviteFriend";
+// import InviteFriend from "./InviteFriend";
 import profilePic from "@/public/assets/profile-pic.png";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import InviteFriend from "./InviteFriend";
+import GroupTab from "./GroupTab";
+import LoadingPage from "@/app/loading";
+
+const fetchGroupHeaderData = async (path) => {
+  try {
+    const { data } = await axios.get(`/api/communities/${path}`);
+    return data;
+  } catch (error) {
+    console.error("Error fetching group info:", error);
+    return null;
+  }
+};
 
 export default function GroupHeader() {
   const pathname = usePathname();
   const path = pathname.split("/")[2];
-  const session = useSession();
-  const { data, isLoading, isError, refetch } = useGroupInfo(
-    path,
-    session?.data?.user?.email
-  );
-  const groupInfo = data[0];
+  const [groupInfo, setGroupInfo] = useState(null);
+
+  useEffect(() => {
+    const loadData = async () => {
+      const data = await fetchGroupHeaderData(path);
+      setGroupInfo(data[0]);
+    };
+    if (path) loadData();
+  }, [path]);
+  console.log(groupInfo, "======;;;>")
+
+  if (!groupInfo) {
+    return (
+      <div className="text-center text-gray-400">
+        <LoadingPage></LoadingPage>
+      </div>
+    );
+  }
+console.log(groupInfo, "this is group Info====>")
   return (
     <div className="border border-gray-600 rounded-lg mb-6 p-6 w-full mx-auto">
       <div className="flex justify-between items-center">
         <div className="flex items-center">
           <Image
             src={
-              groupInfo?.group_picture
-                ? groupInfo?.group_picture
+              groupInfo.group_picture
+                ? groupInfo.group_picture
                 : "https://placehold.co/400x150"
             }
-            alt="Apple Education"
+            alt="Group Picture"
             className="h-[80px] w-[80px] object-cover rounded-lg"
-            width={50}
-            height={50}
+            width={80}
+            height={80}
           />
           <div className="ml-3">
             <h2 className="font-bold text-xl">
-              {groupInfo?.group_name} <span className="text-green-500">✔</span>
+              {groupInfo.group_name} <span className="text-green-500">✔</span>
             </h2>
             <p className="text-sm text-gray-500">
-              {groupInfo?.audience} ·{" "}
-              {groupInfo?.All_Member.length > 0 ? groupInfo?.All_Member : 0}{" "}
-              members
+              {groupInfo.audience} ·{" "}
+              {groupInfo.All_Member?.length || 0} members
             </p>
 
             <div className="flex mt-2">
-              {groupInfo?.All_Member.slice(0, 4).map((member, i) => (
+              {groupInfo.All_Member?.slice(0, 4).map((member, i) => (
                 <Image
                   key={i}
-                  src={member?.user_photo ? member?.user_photo : profilePic}
+                  src={member?.user_photo || profilePic}
                   alt="User Avatar"
-                  width={80}
-                  height={80}
+                  width={40}
+                  height={40}
                   className="rounded-full border-2 border-white -ml-2 first:ml-0"
                 />
               ))}
               <span className="text-xs text-gray-600 ml-2">
                 +
-                {groupInfo?.All_Member.length > 5
-                  ? groupInfo?.All_Member.length - 5
+                {groupInfo.All_Member?.length > 5
+                  ? groupInfo.All_Member.length - 5
                   : 0}
               </span>
             </div>
@@ -68,7 +93,9 @@ export default function GroupHeader() {
             <FaCheck /> Joined
           </button>
           <button
-            onClick={() => document.getElementById("invite_friend").showModal()}
+            onClick={() =>
+              document.getElementById("invite_friend").showModal()
+            }
             className="bg-green-500 text-white px-4 py-2 rounded-lg flex items-center gap-x-2 text-sm"
           >
             <FaPlus /> Invite
@@ -77,9 +104,9 @@ export default function GroupHeader() {
             <FaEllipsisH />
           </button>
         </div>
-        <InviteFriend></InviteFriend>
+        <InviteFriend />
       </div>
-      <GroupTab></GroupTab>
+      <GroupTab />
     </div>
   );
 }

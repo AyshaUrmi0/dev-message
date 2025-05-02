@@ -36,6 +36,7 @@ export async function GET(req, { params }) {
     {
       $addFields: {
         memberData: {
+          _id: "$members._id",
           accessibility: "$members.accessibility",
           name: "$userDetails.name",
           group_user_name: "$members.user_name",
@@ -67,6 +68,15 @@ export async function GET(req, { params }) {
           $push: {
             $cond: [
               { $eq: ["$members.accessibility", "Admin"] },
+              "$memberData",
+              "$$REMOVE"
+            ]
+          }
+        },
+        Admin_Request: {
+          $push: {
+            $cond: [
+              { $eq: ["$members.accessibility", "Admin Request"] },
               "$memberData",
               "$$REMOVE"
             ]
@@ -112,6 +122,7 @@ export async function GET(req, { params }) {
         user_name: 1,
         Owner: "$Owner",
         All_Admin: "$Admin",
+        Admin_Request: "$Admin_Request",
         Invited_members: "$invited",
         All_Member: "$all_Member",
         Request_members: "$request"
