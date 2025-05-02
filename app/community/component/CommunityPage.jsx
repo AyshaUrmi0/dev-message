@@ -1,46 +1,14 @@
-"use client"; 
-
 import Image from "next/image";
 import Link from "next/link";
 import CreateCommunityButton from "./CreateCommunityButton";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import LoadingPage from "@/app/loading";
 
 const membersImages = ["", "", "", ""];
 
-const fetchAllGroupData = async () => {
-  try {
-    const { data } = await axios.get(`/api/community`);
-    return data;
-  } catch (error) {
-    console.error("Error fetching group info:", error);
-    return null;
-  }
-};
 
 
-export default function CommunityPage() {
+export default function CommunityPage({groups}) {
     // const { groups, isLoading, isError } = AllCommunity(); 
   
-    const [groups, setGroups] = useState([])
-
-    useEffect(() => {
-      const loadData = async () => {
-        const data = await fetchAllGroupData();
-        setGroups(data);
-      };
-      loadData();
-    }, []);
-  
-
-    if (!groups) {
-      return (
-        <div className="text-center text-gray-400">
-          <LoadingPage></LoadingPage>
-        </div>
-      );
-    }
   return (
     <div className="max-w-6xl min-h-screen shadow-lg rounded-lg mx-auto p-4">
       <div className="flex justify-between items-center mb-4">
