@@ -23,7 +23,6 @@ const fetchAllGroupData = async () => {
 
 export default async function GroupList() {
   const groups = await fetchAllGroupData();
-  // console.log(groups, "groups==>");
 
   if (!groups) {
     return (
