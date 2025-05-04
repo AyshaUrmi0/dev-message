@@ -5,15 +5,13 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
-function InviteFriend() {
+function InviteFriend({user_name}) {
   const [searchTerm, setSearchTerm] = useState("");
   const [friendName, setFriendName] = useState([]);
   const [description, setDescription] = useState("");
   const [selectedFriends, setSelectedFriends] = useState([]);
   const [friendData, setFriendData] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
-  const pathname = usePathname();
-  const user_name = pathname.split("/")[2];
   const { data } = useSession();
 
   const handleSelect = (name) => {

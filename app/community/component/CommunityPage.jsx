@@ -6,8 +6,7 @@ const membersImages = ["", "", "", ""];
 
 
 
-export default function CommunityPage({groups}) {
-    // const { groups, isLoading, isError } = AllCommunity(); 
+export default function CommunityPage({params,groups}) {
   
   return (
     <div className="max-w-6xl min-h-screen shadow-lg rounded-lg mx-auto p-4">
