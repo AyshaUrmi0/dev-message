@@ -1,39 +1,43 @@
-"use client";
+// "use client";
 import Image from "next/image";
-import { FaCheck, FaPlus, FaEllipsisH } from "react-icons/fa";
+import { FaCheck, FaEllipsisH } from "react-icons/fa";
 // import GroupTab from "./GroupTab";
-import { usePathname } from "next/navigation";
+// import { usePathname } from "next/navigation";
 // import InviteFriend from "./InviteFriend";
 import profilePic from "@/public/assets/profile-pic.png";
 import axios from "axios";
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 import InviteFriend from "./InviteFriend";
 import GroupTab from "./GroupTab";
 import LoadingPage from "@/app/loading";
+import InviteFriendButton from "./InviteFriendButton";
 
 const fetchGroupHeaderData = async (path) => {
   try {
-    const { data } = await axios.get(`/api/communities/${path}`);
-    return data;
+    const { data } = await axios.get(`${process.env.NEXTAUTH_URL}/api/communities/${path}`);
+    return data[0];
   } catch (error) {
     console.error("Error fetching group info:", error);
     return null;
   }
 };
 
-export default function GroupHeader() {
-  const pathname = usePathname();
-  const path = pathname.split("/")[2];
-  const [groupInfo, setGroupInfo] = useState(null);
+export default async function GroupHeader({user_name}) {
+  // const pathname = usePathname();
+  // const path = pathname.split("/")[2];
 
-  useEffect(() => {
-    const loadData = async () => {
-      const data = await fetchGroupHeaderData(path);
-      setGroupInfo(data[0]);
-    };
-    if (path) loadData();
-  }, [path]);
-  console.log(groupInfo, "======;;;>")
+  const groupInfo = await fetchGroupHeaderData(user_name);
+  console.log(groupInfo, "this is group Info====>")
+  // const [groupInfo, setGroupInfo] = useState(null);
+
+  // useEffect(() => {
+  //   const loadData = async () => {
+  //     const data = await fetchGroupHeaderData(path);
+  //     setGroupInfo(data[0]);
+  //   };
+  //   if (path) loadData();
+  // }, [path]);
+  // console.log(groupInfo, "======;;;>")
 
   if (!groupInfo) {
     return (
@@ -92,19 +96,12 @@ console.log(groupInfo, "this is group Info====>")
           <button className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center gap-x-2 text-sm">
             <FaCheck /> Joined
           </button>
-          <button
-            onClick={() =>
-              document.getElementById("invite_friend").showModal()
-            }
-            className="bg-green-500 text-white px-4 py-2 rounded-lg flex items-center gap-x-2 text-sm"
-          >
-            <FaPlus /> Invite
-          </button>
+         <InviteFriendButton></InviteFriendButton>
           <button className="bg-gray-200 text-gray-600 p-2 rounded-lg">
             <FaEllipsisH />
           </button>
         </div>
-        <InviteFriend />
+        <InviteFriend user_name={user_name} />
       </div>
       <GroupTab />
     </div>

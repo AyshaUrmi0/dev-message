@@ -1,4 +1,4 @@
-// "use client";
+"use client";
 import { Button } from "@/components/ui/button";
 import {
   DrawerClose,
@@ -20,7 +20,7 @@ import RichTextEiditor from "@/app/components/rich-text-eiditor/index";
 // import RichTextEiditor from "@/components/rich-text-eiditor";
 // import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button";
 
-export default function GroupPost({mutate}) {
+export default function GroupPost() {
   const { data: session } = useSession();
   const router = useRouter();
   const [selectedPostType, setSelectedPostType] = useState("blog");
@@ -55,7 +55,6 @@ export default function GroupPost({mutate}) {
         if (drawerCloseRef.current) {
           drawerCloseRef.current.click();
         }
-        mutate()
       } else {
         toast.error("Failed to post your content");
       }

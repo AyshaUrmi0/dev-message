@@ -1,4 +1,4 @@
 
-export default function CommunityPage({ params }) {
+export default function CommunityPage() {
   return <div></div>;
 }
